@@ -8,6 +8,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
 const env = require('./utils/env');
+const chromeManifestMaker = require('../automa-vortana-private/src/manifest');
 
 const ASSET_PATH = process.env.ASSET_PATH || '/';
 
@@ -15,6 +16,7 @@ const alias = {
   '@': path.resolve(__dirname, 'src/'),
   secrets: path.join(__dirname, 'secrets.blank.js'),
   '@business': path.resolve(__dirname, 'business/dev'),
+  '@vortana': path.resolve(__dirname, '../automa-vortana-private'),
 };
 
 // load the secrets
@@ -157,18 +159,24 @@ const options = {
     new CopyWebpackPlugin({
       patterns: [
         {
-          from:
-            env.NODE_ENV === 'development' && env.BROWSER === 'chrome'
-              ? `src/manifest.${env.BROWSER}.dev.json`
-              : `src/manifest.${env.BROWSER}.json`,
+          from: `src/manifest.firefox.json`,
           to: path.join(__dirname, 'build', 'manifest.json'),
           force: true,
           toType: 'file',
           transform(content) {
+            if (env.BROWSER === 'chrome') {
+              content = chromeManifestMaker(
+                env.NODE_ENV === 'development' ? 'dev' : ''
+              );
+            } else {
+              const chromeManifest = chromeManifestMaker();
+              content = JSON.parse(content.toString());
+              content.name = chromeManifest.name;
+            }
             const manifestObj = {
               description: process.env.npm_package_description,
               version: process.env.npm_package_version,
-              ...JSON.parse(content.toString()),
+              ...content,
             };
             const isChrome = env.BROWSER === 'chrome';
 

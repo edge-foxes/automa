@@ -3,11 +3,12 @@
     "baseUrl": "./",
     "paths": {
       "@/*": ["src/*"],
-      "@business": ["business/dev/*"]
+      "@business": ["business/dev/*"],
+      "@vortana": ["../automa-vortana-private"]
     },
     "lib": ["ESNext", "DOM"],
     "module": "ESNext",
     "target": "ES2020"
   },
-  "include": ["src/**/*", "utils/**/*"]
+  "include": ["src/**/*", "utils/**/*", "../automa-vortana-private/src/**/*"]
 }
