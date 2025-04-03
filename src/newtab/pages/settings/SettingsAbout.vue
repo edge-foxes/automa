@@ -3,55 +3,28 @@
     <div class="bg-box-transparent mb-2 inline-block rounded-full p-3">
       <img src="@/assets/svg/logo.svg" class="w-14" />
     </div>
-    <p class="text-2xl font-semibold">Automa</p>
+    <p class="text-2xl font-semibold">旋塔 Automa</p>
     <p class="mb-2 mt-1">Version: {{ extensionVersion }}</p>
     <p class="text-gray-600 dark:text-gray-200">
-      Automa is a chrome extension for browser automation. From auto-fill forms,
-      doing a repetitive task, taking a screenshot, to scraping data of the
-      website, it's up to you what you want to do with this extension.
+      旋塔 Automa
+      是一个浏览器自动化工具，它允许您轻松创建自动化任务，如点击按钮、填写表单、复制文本等.
     </p>
-    <div class="mt-4 space-x-2">
+    <br />
+    <p class="text-gray-600 dark:text-gray-200">
+      Powered by
       <a
-        v-for="link in links"
-        :key="link.name"
-        v-tooltip.group="link.name"
-        :href="link.url"
+        href="https://www.automa.site"
         target="_blank"
-        class="hoverable inline-block rounded-lg p-2 transition"
-      >
-        <v-remixicon :name="link.icon" />
+        class="text-blue-500 hover:underline"
+        >Automa
       </a>
-    </div>
-    <div class="my-8 border-b dark:border-gray-700"></div>
-    <h2 class="text-xl font-semibold">Contributors</h2>
-    <p class="mt-1 text-gray-600 dark:text-gray-200">
-      Thanks to everyone who has submitted issues, made suggestions, and
-      generally helped make this a better project.
     </p>
-    <div class="mt-4 mb-12 grid grid-cols-7 gap-2">
-      <a
-        v-for="contributor in store.contributors"
-        :key="contributor.username"
-        v-tooltip.group="contributor.username"
-        :href="contributor.url"
-        target="_blank"
-        rel="noopener"
-      >
-        <img
-          :src="contributor.avatar"
-          :alt="`${contributor.username} avatar`"
-          class="w-16 rounded-lg"
-        />
-      </a>
-    </div>
-    <h3>Translators</h3>
   </div>
 </template>
 <script setup>
 /* eslint-disable camelcase */
 import { useGroupTooltip } from '@/composable/groupTooltip';
 import { useStore } from '@/stores/main';
-import { communities } from '@/utils/shared';
 import { onMounted } from 'vue';
 import browser from 'webextension-polyfill';
 
@@ -59,20 +32,6 @@ useGroupTooltip();
 const store = useStore();
 
 const extensionVersion = browser.runtime.getManifest().version;
-const links = [
-  ...communities,
-  { name: 'Website', icon: 'riGlobalLine', url: 'https://www.automa.site' },
-  {
-    name: 'Documentation',
-    icon: 'riBook3Line',
-    url: 'https://docs.automa.site',
-  },
-  {
-    name: 'Blog',
-    icon: 'riArticleLine',
-    url: 'https://blog.automa.site',
-  },
-];
 
 onMounted(async () => {
   if (store.contributors) return;

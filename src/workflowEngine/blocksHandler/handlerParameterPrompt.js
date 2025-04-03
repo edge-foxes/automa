@@ -3,6 +3,12 @@ import { sleep } from '@/utils/helper';
 import BrowserAPIService from '@/service/browser-api/BrowserAPIService';
 import renderString from '../templating/renderString';
 
+BrowserAPIService.storage.onChanged.addListener(() => {
+  // 注意！！不要删除该空函数
+  // 否则会导致后面的 BrowserAPIService.storage.onChanged.addListener(storageListener) 无效
+  // 最终导致“ParameterPrompt"节点超时，根因不明
+});
+
 function getInputtedParams(promptId, ms = 10000) {
   return new Promise((resolve, reject) => {
     const timeout = null;
