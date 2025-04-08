@@ -36,10 +36,10 @@ export const useUserStore = defineStore('user', {
               if (!response.ok) throw new Error(response.message);
               if (result.code) throw new Error(result.msg);
 
-              const raw_user = result.data;
+              const raw_user = result.data.user;
               return {
                 ...raw_user,
-                username: raw_user.nick || raw_user.name,
+                username: raw_user.nick || raw_user.name || raw_user.username,
               };
             } catch (error) {
               console.error(error);

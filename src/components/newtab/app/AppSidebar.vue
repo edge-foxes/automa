@@ -147,7 +147,6 @@ import { useShortcut, getShortcut } from '@/composable/shortcut';
 import { useGroupTooltip } from '@/composable/groupTooltip';
 import { initElementSelector } from '@/newtab/utils/elementSelector';
 import emitter from '@/lib/mitt';
-import { fetchApi } from '@/utils/api';
 
 useGroupTooltip();
 
@@ -253,21 +252,7 @@ async function injectElementSelector() {
 }
 
 async function onRegisterClick() {
-  const response = await fetchApi('/user/register', { method: 'POST' });
-  const result = await response.json();
-  if (!response.ok) throw new Error(response.message);
-  if (result.code) throw new Error(result.msg);
-
-  let user = result.data;
-  user = {
-    ...user,
-    username: user.nick || user.name,
-  };
-  browser.storage.local.set({
-    user,
-  });
-  browser.storage.local.set({ access_token: user.access_token });
-  userStore.user = user;
+  window.location.href = 'https://staging.xuanta.ai/otp_signup/new';
 }
 
 // async function onLogoutClick() {

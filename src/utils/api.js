@@ -4,18 +4,25 @@ import { isObject, parseJSON } from './helper';
 
 export async function fetchApi(path, options = {}) {
   const urlPath = path.startsWith('/') ? path : `/${path}`;
+  const Cookie = {
+    session_id: (
+      await BrowserAPIService.cookies.get({
+        url: secrets.baseApiUrl,
+        name: 'session_id',
+      })
+    ).value,
+    _neoautoma_backend_session: (
+      await BrowserAPIService.cookies.get({
+        url: secrets.baseApiUrl,
+        name: '_neoautoma_backend_session',
+      })
+    ).value,
+  };
   const headers = {
     'Content-Type': 'application/json',
     ...(options?.headers || {}),
+    Cookie,
   };
-
-  const { access_token } =
-    (await BrowserAPIService.storage.local.get('access_token')) || {};
-  if (access_token && options?.auth) {
-    delete options.auth;
-
-    headers.Authorization = `Bearer ${access_token}`;
-  }
 
   const url = `${secrets.baseApiUrl}${urlPath}`;
 
