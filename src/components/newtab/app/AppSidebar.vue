@@ -147,6 +147,7 @@ import { useShortcut, getShortcut } from '@/composable/shortcut';
 import { useGroupTooltip } from '@/composable/groupTooltip';
 import { initElementSelector } from '@/newtab/utils/elementSelector';
 import emitter from '@/lib/mitt';
+import { AUTH_URL } from '@/common/utils/constant';
 
 useGroupTooltip();
 
@@ -252,7 +253,7 @@ async function injectElementSelector() {
 }
 
 async function onRegisterClick() {
-  window.location.href = 'https://staging.xuanta.ai/otp_signup/new';
+  window.location.href = AUTH_URL;
 }
 
 // async function onLogoutClick() {

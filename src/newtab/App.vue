@@ -14,7 +14,7 @@
           </p>
           <ui-button
             tag="a"
-            href="https://www.automa.site/auth"
+            :href="AUTH_URL"
             class="mt-6 block w-full"
             variant="accent"
           >
@@ -85,7 +85,6 @@ import { useWorkflowStore } from '@/stores/workflow';
 import { useTeamWorkflowStore } from '@/stores/teamWorkflow';
 import { useTheme } from '@/composable/theme';
 import { useHostedWorkflowStore } from '@/stores/hostedWorkflow';
-import { useSharedWorkflowStore } from '@/stores/sharedWorkflow';
 import { loadLocaleMessages, setI18nLanguage } from '@/lib/vueI18n';
 import { getUserWorkflows } from '@/utils/api';
 import { getWorkflowPermissions } from '@/utils/workflowData';
@@ -100,6 +99,8 @@ import dataMigration from '@/utils/dataMigration';
 import iconFirefox from '@/assets/svg/logoFirefox.svg';
 import iconChrome from '@/assets/svg/logo.svg';
 import SharedPermissionsModal from '@/components/newtab/shared/SharedPermissionsModal.vue';
+import { usePurchasedWorkflowStore } from '@/stores/purchasedWorkflow';
+import { AUTH_URL } from '@/common/utils/constant';
 
 const iconElement = document.createElement('link');
 iconElement.rel = 'icon';
@@ -119,8 +120,8 @@ const folderStore = useFolderStore();
 const packageStore = usePackageStore();
 const workflowStore = useWorkflowStore();
 const teamWorkflowStore = useTeamWorkflowStore();
-const sharedWorkflowStore = useSharedWorkflowStore();
 const hostedWorkflowStore = useHostedWorkflowStore();
+const purchasedWorkflowStore = usePurchasedWorkflowStore();
 
 theme.init();
 
@@ -370,7 +371,7 @@ watch(
     retrieved.value = true;
 
     await Promise.allSettled([
-      sharedWorkflowStore.fetchWorkflows(),
+      purchasedWorkflowStore.fetchWorkflows(),
       fetchUserData(),
       syncHostedWorkflows(),
     ]);

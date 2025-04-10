@@ -48,12 +48,22 @@
         <ui-list class="mt-6 space-y-2">
           <ui-list-item
             tag="a"
-            href="https://www.automa.site/workflows"
+            href="https://staging.xuanta.ai/products/"
             target="_blank"
           >
-            <v-remixicon name="riCompass3Line" />
+            <RiStore2Line />
             <span class="ml-4 capitalize">
               {{ t('workflow.browse') }}
+            </span>
+          </ui-list-item>
+          <ui-list-item
+            tag="button"
+            :active="state.activeTab === 'purchased'"
+            @click="updateActiveTab({ activeTab: 'purchased' })"
+          >
+            <RiHammerLine />
+            <span class="ml-4 capitalize">
+              {{ t('workflow.purchased') }}
             </span>
           </ui-list-item>
           <ui-expand
@@ -104,18 +114,6 @@
               >
                 <span class="capitalize">
                   {{ t('workflow.type.local') }}
-                </span>
-              </ui-list-item>
-              <ui-list-item
-                v-if="userStore.user"
-                :active="state.activeTab === 'shared'"
-                tag="button"
-                color="bg-box-transparent font-semibold"
-                class="pl-14"
-                @click="updateActiveTab({ activeTab: 'shared' })"
-              >
-                <span class="capitalize">
-                  {{ t('workflow.type.shared') }}
                 </span>
               </ui-list-item>
               <ui-list-item
@@ -238,9 +236,6 @@
               <option value="local">
                 {{ t('workflow.type.local') }}
               </option>
-              <option v-if="userStore.user" value="shared">
-                {{ t('workflow.type.shared') }}
-              </option>
               <option v-if="hostedWorkflows?.length > 0" value="host">
                 {{ t('workflow.type.host') }}
               </option>
@@ -252,12 +247,6 @@
             <workflows-user-team
               :active="state.activeTab === 'team'"
               :team-id="state.teamId"
-              :search="state.query"
-              :sort="{ by: state.sortBy, order: state.sortOrder }"
-            />
-          </ui-tab-panel>
-          <ui-tab-panel value="shared" class="workflows-container">
-            <workflows-shared
               :search="state.query"
               :sort="{ by: state.sortBy, order: state.sortOrder }"
             />
@@ -276,45 +265,12 @@
               :sort="{ by: state.sortBy, order: state.sortOrder }"
             />
           </ui-tab-panel>
+          <ui-tab-panel value="purchased" class="workflows-container">
+            <workflows-purchased
+              :sort="{ by: state.sortBy, order: state.sortOrder }"
+            />
+          </ui-tab-panel>
         </ui-tab-panels>
-        <ui-card
-          v-if="workflowStore.isFirstTime"
-          class="first-card relative mt-8 dark:text-gray-200"
-        >
-          <v-remixicon
-            name="riCloseLine"
-            class="absolute top-4 right-4 cursor-pointer"
-            @click="workflowStore.isFirstTime = false"
-          />
-          <p>Create your first workflow by recording your actions:</p>
-          <ol class="list-inside list-decimal">
-            <li>Open your browser and go to your destination URL</li>
-            <li>
-              Click the "Record workflow" button, and do your simple repetitive
-              task
-            </li>
-            <li>
-              Need more help? Join
-              <a
-                href="https://discord.gg/C6khwwTE84"
-                target="_blank"
-                rel="noreferer"
-                >the community</a
-              >, or email us at
-              <a href="mailto:support@automa.site" target="_blank"
-                >support@automa.site</a
-              >
-            </li>
-          </ol>
-          <p class="mt-4">
-            Learn more about recording in
-            <a
-              href="https://docs.automa.site/guide/quick-start.html#recording-actions"
-              target="_blank"
-              >the documentation</a
-            >
-          </p>
-        </ui-card>
       </div>
     </div>
     <ui-modal v-model="addWorkflowModal.show" title="Workflow">
@@ -360,10 +316,6 @@
         </ui-button>
       </div>
     </ui-modal>
-    <shared-permissions-modal
-      v-model="permissionState.showModal"
-      :permissions="permissionState.items"
-    />
   </div>
 </template>
 <script setup>
@@ -384,11 +336,11 @@ import { isWhitespace, findTriggerBlock } from '@/utils/helper';
 import { importWorkflow, getWorkflowPermissions } from '@/utils/workflowData';
 import recordWorkflow from '@/newtab/utils/startRecordWorkflow';
 import WorkflowsLocal from '@/components/newtab/workflows/WorkflowsLocal.vue';
-import WorkflowsShared from '@/components/newtab/workflows/WorkflowsShared.vue';
 import WorkflowsHosted from '@/components/newtab/workflows/WorkflowsHosted.vue';
 import WorkflowsFolder from '@/components/newtab/workflows/WorkflowsFolder.vue';
 import WorkflowsUserTeam from '@/components/newtab/workflows/WorkflowsUserTeam.vue';
-import SharedPermissionsModal from '@/components/newtab/shared/SharedPermissionsModal.vue';
+import { RiStore2Line, RiHammerLine } from '@remixicon/vue';
+import WorkflowsPurchased from '@/components/newtab/workflows/WorkflowsPurchased.vue';
 
 useGroupTooltip();
 

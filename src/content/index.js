@@ -377,3 +377,7 @@ window.addEventListener('DOMContentLoaded', async () => {
 
   alert('Workflow installed');
 });
+
+document.addEventListener('xuanta:open-dashboard', () => {
+  sendMessage('open:dashboard', '', 'background');
+});

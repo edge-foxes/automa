@@ -223,6 +223,15 @@
           <v-remixicon name="riDeleteBin7Line" class="mr-2 -ml-1" />
           <span>Delete from team</span>
         </ui-list-item>
+        <ui-list-item
+          v-if="!hosted"
+          v-close-popover
+          class="cursor-pointer"
+          @click="onSellClick"
+        >
+          <v-remixicon name="riFileCopyLine" class="mr-2 -ml-1" />
+          {{ t('global.sell') }}
+        </ui-list-item>
       </ui-list>
     </ui-popover>
     <ui-button
@@ -802,6 +811,19 @@ async function syncWorkflow() {
   } else {
     fetchSyncWorkflow();
   }
+}
+
+async function onSellClick() {
+  if (!userStore.user) {
+    dialog.custom('auth', {
+      title: t('auth.title'),
+    });
+    return;
+  }
+  // share的上架流程，以后可以参考
+  // emit('modal', 'workflow-share');
+
+  workflowStore.sell(props.workflow);
 }
 
 retrieveTriggerText();

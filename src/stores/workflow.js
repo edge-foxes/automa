@@ -1,3 +1,4 @@
+import { v6 as uuid } from 'uuid';
 import { defineStore } from 'pinia';
 import { nanoid } from 'nanoid';
 import defu from 'defu';
@@ -15,7 +16,7 @@ import { useUserStore } from './user';
 
 const defaultWorkflow = (data = null, options = {}) => {
   let workflowData = {
-    id: nanoid(),
+    id: uuid(),
     name: '',
     icon: 'riGlobalLine',
     folderId: null,
@@ -295,6 +296,17 @@ export const useWorkflowStore = defineStore('workflow', {
       }
 
       return id;
+    },
+
+    async sell(workflow) {
+      await fetchApi(`/me/workflows/${workflow.id}`, {
+        method: 'PUT',
+        body: JSON.stringify({ workflow }),
+      });
+      window.open(
+        `https://staging.xuanta.ai/admin/workflows/${workflow.id}/product/edit`,
+        '_blank'
+      );
     },
   },
 });

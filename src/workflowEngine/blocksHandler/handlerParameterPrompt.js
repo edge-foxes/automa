@@ -11,12 +11,9 @@ BrowserAPIService.storage.onChanged.addListener(() => {
 
 function getInputtedParams(promptId, ms = 10000) {
   return new Promise((resolve, reject) => {
-    const timeout = null;
-
     const storageListener = (event) => {
       if (!event[promptId]) return;
 
-      clearTimeout(timeout);
       BrowserAPIService.storage.onChanged.removeListener(storageListener);
       BrowserAPIService.storage.local.remove(promptId);
 

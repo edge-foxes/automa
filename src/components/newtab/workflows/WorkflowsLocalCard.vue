@@ -58,7 +58,14 @@
               class="cursor-pointer"
               @click="item.action(workflow)"
             >
-              <v-remixicon :name="item.icon" class="mr-2 -ml-1" />
+              <v-remixicon
+                v-if="item.icon"
+                :name="item.icon"
+                class="mr-2 -ml-1"
+              />
+              <template v-else>
+                <RiStore2Line v-if="item.id === 'sell'" class="mr-2 -ml-1" />
+              </template>
               <span class="capitalize">{{ item.name }}</span>
             </ui-list-item>
           </ui-list>
@@ -90,6 +97,7 @@
 <script setup>
 import { useI18n } from 'vue-i18n';
 import SharedCard from '@/components/newtab/shared/SharedCard.vue';
+import { RiStore2Line } from '@remixicon/vue';
 
 defineProps({
   workflow: {

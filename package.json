@@ -1,6 +1,6 @@
 {
   "name": "旋塔Automa",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "浏览器自动化工具, powered by automa 1.29.9",
   "scripts": {
     "build": "node utils/build.js",
@@ -36,6 +36,7 @@
     "@codemirror/view": "^6.33.0",
     "@medv/finder": "^3.1.0",
     "@n8n_io/riot-tmpl": "^2.0.0",
+    "@remixicon/vue": "^4.6.0",
     "@tiptap/core": "^2.0.4",
     "@tiptap/extension-character-count": "^2.0.4",
     "@tiptap/extension-history": "^2.0.4",
@@ -86,6 +87,7 @@
     "rxjs": "^7.8.0",
     "sizzle": "^2.3.8",
     "tippy.js": "^6.3.1",
+    "uuid": "^11.1.0",
     "v-remixicon": "^0.1.1",
     "vue": "3.4.38",
     "vue-i18n": "9",

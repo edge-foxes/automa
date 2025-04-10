@@ -22,7 +22,6 @@
           :key="workflow.id"
           :workflow="workflow"
           :is-hosted="userStore.hostedWorkflows[workflow.id]"
-          :is-shared="sharedWorkflowStore.getById(workflow.id)"
           :is-pinned="true"
           :menu="menu"
           @dragstart="onDragStart"
@@ -38,7 +37,6 @@
         :key="workflow.id"
         :workflow="workflow"
         :is-hosted="userStore.hostedWorkflows[workflow.id]"
-        :is-shared="sharedWorkflowStore.getById(workflow.id)"
         :is-pinned="state.pinnedWorkflows.includes(workflow.id)"
         :menu="menu"
         @dragstart="onDragStart"
@@ -121,7 +119,6 @@ import { useUserStore } from '@/stores/user';
 import { useDialog } from '@/composable/dialog';
 import { useWorkflowStore } from '@/stores/workflow';
 import { exportWorkflow } from '@/utils/workflowData';
-import { useSharedWorkflowStore } from '@/stores/sharedWorkflow';
 import RendererWorkflowService from '@/service/renderer/RendererWorkflowService';
 import WorkflowsLocalCard from './WorkflowsLocalCard.vue';
 
@@ -152,7 +149,6 @@ const { t } = useI18n();
 const dialog = useDialog();
 const userStore = useUserStore();
 const workflowStore = useWorkflowStore();
-const sharedWorkflowStore = useSharedWorkflowStore();
 
 const state = shallowReactive({
   pinnedWorkflows: [],
@@ -406,6 +402,13 @@ const menu = [
     name: t('common.delete'),
     icon: 'riDeleteBin7Line',
     action: deleteWorkflow,
+  },
+  {
+    id: 'sell',
+    name: t('global.sell'),
+    action: (workflow) => {
+      workflowStore.sell(workflow);
+    },
   },
 ];
 

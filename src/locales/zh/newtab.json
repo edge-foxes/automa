@@ -245,7 +245,8 @@
     "import": "导入工作流",
     "new": "新建工作流",
     "delete": "删除工作流",
-    "browse": "浏览工作流",
+    "browse": "商店",
+    "purchased": "已购买的工作流",
     "name": "工作流名称",
     "rename": "重命名工作流",
     "backupCloud": "备份工作流到云端",
@@ -520,5 +521,9 @@
       "prevPage": "上一页",
       "of": "共 {page} 页"
     }
+  },
+
+  "global": {
+    "sell": "上架售卖"
   }
 }
