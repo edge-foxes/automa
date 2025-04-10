@@ -381,3 +381,6 @@ window.addEventListener('DOMContentLoaded', async () => {
 document.addEventListener('xuanta:open-dashboard', () => {
   sendMessage('open:dashboard', '', 'background');
 });
+document.addEventListener('xuanta:open-dashboard-in-current-tab', () => {
+  sendMessage('open:dashboard-in-current-tab', '', 'background');
+});

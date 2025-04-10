@@ -2,12 +2,36 @@ import browser from 'webextension-polyfill';
 import { waitTabLoaded } from '@/workflowEngine/helper';
 
 class BackgroundUtils {
-  static async openDashboard(url, updateTab = true) {
+  /**
+   * @param url {string}
+   * @param options {{
+   *   updateTab?: boolean;
+   *   inCurrentTab?: boolean;
+   * }}
+   * @returns {Promise<void>}
+   */
+  static async openDashboard(url, options = {}) {
+    const { updateTab, inCurrentTab } = {
+      updateTab: true,
+      inCurrentTab: false,
+      ...options,
+    };
+
     const tabUrl = browser.runtime.getURL(
       `/newtab.html#${typeof url === 'string' ? url : ''}`
     );
 
     try {
+      if (inCurrentTab) {
+        const [curTab] = await browser.tabs.query({
+          lastFocusedWindow: true,
+        });
+        await browser.tabs.update(curTab.id, {
+          url: tabUrl,
+        });
+        return;
+      }
+
       const [tab] = await browser.tabs.query({
         url: browser.runtime.getURL('/newtab.html'),
       });

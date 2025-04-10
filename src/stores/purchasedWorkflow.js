@@ -9,13 +9,12 @@ export const usePurchasedWorkflowStore = defineStore('purchased-workflows', {
   }),
   getters: {
     toArray: (state) => Object.values(state.workflows),
-    getById: (state) => (id) => {
-      if (!state.workflows) return null;
-
-      return state.workflows[id] || null;
-    },
   },
   actions: {
+    getById(id) {
+      if (!this.workflows) return null;
+      return this.workflows[id] || null;
+    },
     async saveWorkflow() {
       await chrome.storage.local.set({
         purchased_workflow: JSON.stringify(this.workflows),
@@ -26,8 +25,6 @@ export const usePurchasedWorkflowStore = defineStore('purchased-workflows', {
       if (!target) return null;
 
       if (new Date(target.term_ends).getTime() <= Date.now()) {
-        delete this.workflows[id];
-        await this.saveWorkflow();
         throw new Error('当前工作流已过期，请重新购买');
       }
 

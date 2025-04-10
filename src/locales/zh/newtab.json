@@ -4,7 +4,7 @@
     "communities": "社区",
     "user": "用户",
     "userCenter": {
-      "register": "一键注册",
+      "register": "注册登录",
       "modify": "修改信息",
       "signIn": "登录",
       "logout": "注销登录",
@@ -222,7 +222,7 @@
         }
       }
     },
-      "previewMode": {
+    "previewMode": {
       "title": "预览模式",
       "description": "正处于预览模式，你所做的修改不会被保存下来"
     },
@@ -522,7 +522,6 @@
       "of": "共 {page} 页"
     }
   },
-
   "global": {
     "sell": "上架售卖"
   }

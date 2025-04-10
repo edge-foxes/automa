@@ -47,7 +47,14 @@ onMounted(async () => {
 });
 
 const onRunWorkflowClick = async (workflow) => {
-  const data = await purchasedWorkflowStore.getClearTextById(workflow.id);
-  await RendererWorkflowService.executeWorkflow(data);
+  try {
+    const data = await purchasedWorkflowStore.getClearTextById(workflow.id);
+    await RendererWorkflowService.executeWorkflow(data);
+  } catch (err) {
+    console.error(err);
+    if (err?.message?.includes('已过期')) {
+      alert(err.message);
+    }
+  }
 };
 </script>

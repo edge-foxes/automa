@@ -22,7 +22,7 @@
           Disabled
         </span>
         <button
-          v-else-if="!disabled"
+          v-else-if="!disabled && !state.isExpired"
           class="invisible group-hover:visible"
           @click="$emit('execute', data)"
         >

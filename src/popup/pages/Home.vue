@@ -62,6 +62,12 @@
         {{ t(`home.workflow.type.host`) }}
       </ui-tab>
       <ui-tab v-if="userStore.user?.teams?.length" value="team"> Teams </ui-tab>
+      <ui-tab
+        v-if="purchasedWorkflowStore.toArray.length > 0"
+        value="purchased"
+      >
+        已购
+      </ui-tab>
     </ui-tabs>
   </div>
   <home-team-workflows
@@ -143,19 +149,30 @@
         </div>
       </ui-popover>
     </div>
-    <home-workflow-card
-      v-for="workflow in workflows"
-      :key="workflow.id"
-      :workflow="workflow"
-      :tab="state.activeTab"
-      :pinned="state.pinnedWorkflows.includes(workflow.id)"
-      @details="openWorkflowPage"
-      @update="updateWorkflow(workflow.id, $event)"
-      @execute="executeWorkflow"
-      @rename="renameWorkflow"
-      @delete="deleteWorkflow"
-      @toggle-pin="togglePinWorkflow(workflow)"
-    />
+    <template v-if="state.activeTab !== 'purchased'">
+      <home-workflow-card
+        v-for="workflow in workflows"
+        :key="workflow.id"
+        :workflow="workflow"
+        :tab="state.activeTab"
+        :pinned="state.pinnedWorkflows.includes(workflow.id)"
+        @details="openWorkflowPage"
+        @update="updateWorkflow(workflow.id, $event)"
+        @execute="executeWorkflow"
+        @rename="renameWorkflow"
+        @delete="deleteWorkflow"
+        @toggle-pin="togglePinWorkflow(workflow)"
+      />
+    </template>
+    <template v-else>
+      <home-workflow-card
+        v-for="workflow in workflows"
+        :key="workflow.id"
+        :workflow="workflow"
+        :tab="state.activeTab"
+        @execute="executePurchasedWorkflow"
+      />
+    </template>
     <div
       v-if="state.showSettingsPopup"
       class="fixed bottom-5 left-0 m-4 rounded-lg bg-accent p-4 text-white shadow-md dark:text-black z-10"
@@ -198,6 +215,7 @@ import automa from '@business';
 import { computed, onMounted, shallowReactive, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import browser from 'webextension-polyfill';
+import { usePurchasedWorkflowStore } from '@/stores/purchasedWorkflow';
 
 const isMV2 = browser.runtime.getManifest().manifest_version === 2;
 
@@ -208,6 +226,7 @@ const folderStore = useFolderStore();
 const workflowStore = useWorkflowStore();
 const teamWorkflowStore = useTeamWorkflowStore();
 const hostedWorkflowStore = useHostedWorkflowStore();
+const purchasedWorkflowStore = usePurchasedWorkflowStore();
 
 useGroupTooltip();
 
@@ -279,13 +298,30 @@ const localWorkflows = computed(() => {
     data: filteredLocalWorkflows,
   });
 });
-const workflows = computed(() =>
-  state.activeTab === 'local' ? localWorkflows.value : hostedWorkflows.value
-);
-const showTab = computed(
-  () =>
-    hostedWorkflowStore.toArray.length > 0 || userStore.user?.teams?.length > 0
-);
+const purchasedWorkflows = computed(() => {
+  if (state.activeTab !== 'purchased') return [];
+
+  return purchasedWorkflowStore.toArray.filter((workflow) =>
+    workflow.name.toLocaleLowerCase().includes(state.query.toLocaleLowerCase())
+  );
+});
+const workflows = computed(() => {
+  if (state.activeTab === 'local') {
+    return localWorkflows.value;
+  }
+  if (state.activeTab === 'purchased') {
+    return purchasedWorkflows.value;
+  }
+
+  return hostedWorkflows.value;
+});
+const showTab = computed(() => {
+  return (
+    hostedWorkflowStore.toArray.length > 0 ||
+    userStore.user?.teams?.length > 0 ||
+    purchasedWorkflowStore.toArray.length > 0
+  );
+});
 
 function openDocs() {
   window.open(
@@ -320,6 +356,16 @@ async function executeWorkflow(workflow) {
     console.error(error);
   }
 }
+async function executePurchasedWorkflow(workflow) {
+  try {
+    const data = await purchasedWorkflowStore.getClearTextById(workflow.id);
+    await RendererWorkflowService.executeWorkflow(data);
+    window.close();
+  } catch (error) {
+    console.error(error);
+  }
+}
+
 function updateWorkflow(id, data) {
   return workflowStore.update({
     id,
@@ -398,6 +444,7 @@ onMounted(async () => {
   await folderStore.load();
   await userStore.loadUser({ storage: localStorage, ttl: 1000 * 60 * 5 });
   await teamWorkflowStore.loadData();
+  await purchasedWorkflowStore.fetchWorkflows();
 
   let activeTab = localStorage.getItem('popup-tab') || 'local';
 

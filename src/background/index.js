@@ -85,6 +85,9 @@ message.on('fetch:text', (url) => {
 });
 
 message.on('open:dashboard', (url) => BackgroundUtils.openDashboard(url));
+message.on('open:dashboard-in-current-tab', (url) =>
+  BackgroundUtils.openDashboard(url, { inCurrentTab: true })
+);
 message.on('set:active-tab', (tabId) => {
   return browser.tabs.update(tabId, { active: true });
 });
@@ -190,7 +193,7 @@ message.on('workflow:register', ({ triggerBlock, workflowId }) => {
 });
 message.on('recording:stop', async () => {
   try {
-    await BackgroundUtils.openDashboard('', false);
+    await BackgroundUtils.openDashboard('', { updateTab: false });
     await BackgroundUtils.sendMessageToDashboard('recording:stop');
   } catch (error) {
     console.error(error);
