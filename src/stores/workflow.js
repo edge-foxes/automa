@@ -304,7 +304,7 @@ export const useWorkflowStore = defineStore('workflow', {
         body: JSON.stringify({ workflow }),
       });
       window.open(
-        `https://staging.xuanta.ai/admin/workflows/${workflow.id}/product/edit`,
+        `https://${process.env.ENV_HOST}/admin/workflows/${workflow.id}/product/edit`,
         '_blank'
       );
     },

@@ -148,6 +148,7 @@ const options = {
     new VueLoaderPlugin(),
     new webpack.DefinePlugin({
       BROWSER_TYPE: JSON.stringify(env.BROWSER),
+      ENV_HOST: JSON.stringify(env.ENV_HOST),
     }),
     new webpack.ProgressPlugin(),
     // clean the build folder
@@ -155,7 +156,7 @@ const options = {
       verbose: false,
     }),
     // expose and write the allowed env vars on the compiled bundle
-    new webpack.EnvironmentPlugin(['NODE_ENV']),
+    new webpack.EnvironmentPlugin(['NODE_ENV', 'ENV_HOST']),
     new CopyWebpackPlugin({
       patterns: [
         {

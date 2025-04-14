@@ -76,7 +76,19 @@
     :search="state.query"
   />
   <div
-    v-if="state.activeTab !== 'team'"
+    v-if="state.activeTab === 'purchased'"
+    class="relative z-20 space-y-2 px-5 pb-5"
+  >
+    <home-workflow-card
+      v-for="workflow in workflows"
+      :key="workflow.id"
+      :workflow="workflow"
+      :tab="state.activeTab"
+      @execute="executePurchasedWorkflow"
+    />
+  </div>
+  <div
+    v-if="state.activeTab !== 'team' && state.activeTab !== 'purchased'"
     class="relative z-20 space-y-2 px-5 pb-5"
   >
     <ui-card v-if="workflowStore.getWorkflows.length === 0" class="text-center">
@@ -149,30 +161,19 @@
         </div>
       </ui-popover>
     </div>
-    <template v-if="state.activeTab !== 'purchased'">
-      <home-workflow-card
-        v-for="workflow in workflows"
-        :key="workflow.id"
-        :workflow="workflow"
-        :tab="state.activeTab"
-        :pinned="state.pinnedWorkflows.includes(workflow.id)"
-        @details="openWorkflowPage"
-        @update="updateWorkflow(workflow.id, $event)"
-        @execute="executeWorkflow"
-        @rename="renameWorkflow"
-        @delete="deleteWorkflow"
-        @toggle-pin="togglePinWorkflow(workflow)"
-      />
-    </template>
-    <template v-else>
-      <home-workflow-card
-        v-for="workflow in workflows"
-        :key="workflow.id"
-        :workflow="workflow"
-        :tab="state.activeTab"
-        @execute="executePurchasedWorkflow"
-      />
-    </template>
+    <home-workflow-card
+      v-for="workflow in workflows"
+      :key="workflow.id"
+      :workflow="workflow"
+      :tab="state.activeTab"
+      :pinned="state.pinnedWorkflows.includes(workflow.id)"
+      @details="openWorkflowPage"
+      @update="updateWorkflow(workflow.id, $event)"
+      @execute="executeWorkflow"
+      @rename="renameWorkflow"
+      @delete="deleteWorkflow"
+      @toggle-pin="togglePinWorkflow(workflow)"
+    />
     <div
       v-if="state.showSettingsPopup"
       class="fixed bottom-5 left-0 m-4 rounded-lg bg-accent p-4 text-white shadow-md dark:text-black z-10"

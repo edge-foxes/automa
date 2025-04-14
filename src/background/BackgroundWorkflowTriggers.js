@@ -157,8 +157,11 @@ class BackgroundWorkflowTriggers {
         'workflowHosts',
         'teamWorkflows',
       ]);
-    const convertToArr = (value) =>
-      Array.isArray(value) ? value : Object.values(value);
+    const convertToArr = (value) => {
+      console.log('convert to arr', value);
+      if (!value) return [];
+      return Array.isArray(value) ? value : Object.values(value);
+    };
 
     const workflowsArr = convertToArr(workflows);
 

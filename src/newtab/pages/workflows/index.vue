@@ -48,7 +48,7 @@
         <ui-list class="mt-6 space-y-2">
           <ui-list-item
             tag="a"
-            href="https://staging.xuanta.ai/products/"
+            :href="`https://${ENV_HOST}/products/`"
             target="_blank"
           >
             <RiStore2Line />
@@ -344,6 +344,7 @@ import WorkflowsPurchased from '@/components/newtab/workflows/WorkflowsPurchased
 
 useGroupTooltip();
 
+const { ENV_HOST } = process.env;
 const { t } = useI18n();
 const toast = useToast();
 const dialog = useDialog();

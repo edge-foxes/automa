@@ -85,8 +85,11 @@ message.on('fetch:text', (url) => {
 });
 
 message.on('open:dashboard', (url) => BackgroundUtils.openDashboard(url));
-message.on('open:dashboard-in-current-tab', (url) =>
-  BackgroundUtils.openDashboard(url, { inCurrentTab: true })
+message.on('open:dashboard-in-current-tab', (url, { tab }) =>
+  BackgroundUtils.openDashboard(url, {
+    inCurrentTab: true,
+    tabIdToClose: tab.id,
+  })
 );
 message.on('set:active-tab', (tabId) => {
   return browser.tabs.update(tabId, { active: true });

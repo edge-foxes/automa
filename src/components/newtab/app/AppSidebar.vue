@@ -65,7 +65,10 @@
       placement="right"
     >
       <template #trigger>
-        <span class="bg-box-transparent inline-block rounded-full p-1">
+        <span
+          class="bg-box-transparent inline-block rounded-full p-1"
+          style="margin-bottom: 10px"
+        >
           <!--          <img-->
           <!--            :src="userStore.user.avatar_url"-->
           <!--            height="32"-->
@@ -101,7 +104,12 @@
       </div>
     </ui-popover>
 
-    <ui-popover trigger="mouseenter" placement="right" class="my-4">
+    <ui-popover
+      v-if="!userStore.user"
+      trigger="mouseenter"
+      placement="right"
+      class="my-4"
+    >
       <template #trigger>
         <v-remixicon name="riGroupLine" />
       </template>
@@ -253,7 +261,7 @@ async function injectElementSelector() {
 }
 
 async function onRegisterClick() {
-  window.location.href = AUTH_URL;
+  window.location.href = `${AUTH_URL}?from=xuanta_dashboard`;
 }
 
 // async function onLogoutClick() {

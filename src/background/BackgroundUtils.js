@@ -6,29 +6,41 @@ class BackgroundUtils {
    * @param url {string}
    * @param options {{
    *   updateTab?: boolean;
-   *   inCurrentTab?: boolean;
+   *   tabIdToClose?: number;
    * }}
    * @returns {Promise<void>}
    */
   static async openDashboard(url, options = {}) {
-    const { updateTab, inCurrentTab } = {
+    const { updateTab, tabIdToClose } = {
       updateTab: true,
-      inCurrentTab: false,
       ...options,
     };
 
     const tabUrl = browser.runtime.getURL(
       `/newtab.html#${typeof url === 'string' ? url : ''}`
     );
+    const createWin = async () => {
+      const curWin = await browser.windows.getCurrent();
+      const windowOptions = {
+        top: 0,
+        left: 0,
+        width: Math.min(curWin.width, 715),
+        height: Math.min(curWin.height, 715),
+        url: tabUrl,
+        type: 'popup',
+      };
+
+      if (updateTab) {
+        windowOptions.focused = true;
+      }
+
+      await browser.windows.create(windowOptions);
+    };
 
     try {
-      if (inCurrentTab) {
-        const [curTab] = await browser.tabs.query({
-          lastFocusedWindow: true,
-        });
-        await browser.tabs.update(curTab.id, {
-          url: tabUrl,
-        });
+      if (tabIdToClose) {
+        await createWin();
+        await browser.tabs.remove(tabIdToClose);
         return;
       }
 
@@ -49,21 +61,7 @@ class BackgroundUtils {
           });
         }
       } else {
-        const curWin = await browser.windows.getCurrent();
-        const windowOptions = {
-          top: 0,
-          left: 0,
-          width: Math.min(curWin.width, 715),
-          height: Math.min(curWin.height, 715),
-          url: tabUrl,
-          type: 'popup',
-        };
-
-        if (updateTab) {
-          windowOptions.focused = true;
-        }
-
-        await browser.windows.create(windowOptions);
+        await createWin();
       }
     } catch (error) {
       console.error(error);

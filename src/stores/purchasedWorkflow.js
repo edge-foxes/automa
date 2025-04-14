@@ -29,13 +29,13 @@ export const usePurchasedWorkflowStore = defineStore('purchased-workflows', {
       }
 
       if (target.ciphertext) {
-        return target.ciphertext; // todo 解密
+        return target.ciphertext; // todo 使用 workflow_crypto 解密
       }
 
       const {
         data: { workflow },
       } = await (await fetchApi(`/me/workflows/leases/${id}`)).json();
-      // todo 解密并前端加密
+      // todo 使用workflow_crypto 解密并前端加密
       target.ciphertext = workflow;
       await this.saveWorkflow();
       return workflow;
