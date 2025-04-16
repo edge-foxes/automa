@@ -69,6 +69,10 @@ class BackgroundUtils {
     }
   }
 
+  static async openTab(url) {
+    await browser.tabs.create({ url });
+  }
+
   static async sendMessageToDashboard(type, data) {
     const [tab] = await browser.tabs.query({
       url: browser.runtime.getURL('/newtab.html'),

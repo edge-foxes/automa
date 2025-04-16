@@ -11,15 +11,24 @@
       <h1 class="text-xl font-semibold text-white">旋塔 Automa</h1>
       <div class="grow"></div>
       <ui-button
-        v-tooltip.group="
-          'Start recording by opening the dashboard. Click to learn more'
-        "
+        v-tooltip.group="'重新加载工作流'"
         icon
         class="mr-2"
-        @click="openDocs"
+        @click="reloadSidePanel()"
       >
-        <v-remixicon name="riRecordCircleLine" />
+        <!--        <v-remixicon name="riRecordCircleLine" />-->
+        <RiRefreshLine />
       </ui-button>
+      <!--      <ui-button-->
+      <!--        v-tooltip.group="-->
+      <!--          'Start recording by opening the dashboard. Click to learn more'-->
+      <!--        "-->
+      <!--        icon-->
+      <!--        class="mr-2"-->
+      <!--        @click="openDocs"-->
+      <!--      >-->
+      <!--        <v-remixicon name="riRecordCircleLine" />-->
+      <!--      </ui-button>-->
       <ui-button
         v-tooltip.group="
           t(`home.elementSelector.${state.haveAccess ? 'name' : 'noAccess'}`)
@@ -39,15 +48,6 @@
         <v-remixicon name="riHome5Line" />
       </ui-button>
     </div>
-    <div class="flex">
-      <ui-input
-        v-model="state.query"
-        :placeholder="`${t('common.search')}...`"
-        autocomplete="off"
-        prepend-icon="riSearch2Line"
-        class="search-input w-full"
-      />
-    </div>
     <ui-tabs
       v-if="showTab"
       v-model="state.activeTab"
@@ -55,12 +55,7 @@
       class="mt-1"
       @change="onTabChange"
     >
-      <ui-tab
-        v-if="purchasedWorkflowStore.toArray.length > 0"
-        value="purchased"
-      >
-        已购
-      </ui-tab>
+      <ui-tab value="purchased"> 已购 </ui-tab>
       <ui-tab value="local">
         {{ t(`home.workflow.type.local`) }}
       </ui-tab>
@@ -79,13 +74,26 @@
     v-if="state.activeTab === 'purchased'"
     class="relative z-20 space-y-2 px-5 pb-5"
   >
-    <home-workflow-card
-      v-for="workflow in workflows"
-      :key="workflow.id"
-      :workflow="workflow"
-      :tab="state.activeTab"
-      @execute="executePurchasedWorkflow"
-    />
+    <template v-if="workflows.length">
+      <home-workflow-card
+        v-for="workflow in workflows"
+        :key="workflow.id"
+        :workflow="workflow"
+        :tab="state.activeTab"
+        @execute="executePurchasedWorkflow"
+      />
+    </template>
+    <ui-card v-else class="text-center">
+      <img src="@/assets/svg/alien.svg" />
+      <p class="font-semibold">{{ t('message.empty') }}</p>
+      <ui-button
+        variant="accent"
+        class="mt-6"
+        @click="openTab(`https://${ENV_HOST}/products`)"
+      >
+        购买工作流
+      </ui-button>
+    </ui-card>
   </div>
   <div
     v-if="state.activeTab !== 'team' && state.activeTab !== 'purchased'"
@@ -102,18 +110,81 @@
         {{ t('home.workflow.new') }}
       </ui-button>
     </ui-card>
-    <div v-if="pinnedWorkflows.length > 0" class="mt-1 mb-4 border-b pb-4">
-      <div class="mb-1 flex items-center text-gray-300">
-        <v-remixicon name="riPushpin2Line" size="20" class="mr-2" />
-        <span>Pinned workflows</span>
+    <template v-else>
+      <div class="flex">
+        <ui-input
+          v-model="state.query"
+          :placeholder="`${t('common.search')}...`"
+          autocomplete="off"
+          prepend-icon="riSearch2Line"
+          class="search-input w-full"
+        />
+      </div>
+      <div v-if="pinnedWorkflows.length > 0" class="mt-1 mb-4 border-b pb-4">
+        <div class="mb-1 flex items-center text-gray-300">
+          <v-remixicon name="riPushpin2Line" size="20" class="mr-2" />
+          <span>Pinned workflows</span>
+        </div>
+        <home-workflow-card
+          v-for="workflow in pinnedWorkflows"
+          :key="workflow.id"
+          :workflow="workflow"
+          :tab="state.activeTab"
+          :pinned="true"
+          class="mb-2"
+          @details="openWorkflowPage"
+          @update="updateWorkflow(workflow.id, $event)"
+          @execute="executeWorkflow"
+          @rename="renameWorkflow"
+          @delete="deleteWorkflow"
+          @toggle-pin="togglePinWorkflow(workflow)"
+        />
+      </div>
+      <div
+        :class="{ 'p-2 rounded-lg bg-white': pinnedWorkflows.length === 0 }"
+        class="flex items-center"
+      >
+        <ui-select v-model="state.activeFolder" class="flex-1">
+          <option value="">Folder (all)</option>
+          <option
+            v-for="folder in folderStore.items"
+            :key="folder.id"
+            :value="folder.id"
+          >
+            {{ folder.name }}
+          </option>
+        </ui-select>
+        <ui-popover class="ml-2">
+          <template #trigger>
+            <ui-button>
+              <v-remixicon name="riSortDesc" class="mr-2 -ml-1" />
+              <span>Sort</span>
+            </ui-button>
+          </template>
+          <div class="w-48">
+            <ui-select v-model="sortState.order" block placeholder="Sort order">
+              <option value="asc">Ascending</option>
+              <option value="desc">Descending</option>
+            </ui-select>
+            <ui-select
+              v-model="sortState.by"
+              :placeholder="t('sort.sortBy')"
+              block
+              class="mt-2 flex-1"
+            >
+              <option v-for="sort in sorts" :key="sort" :value="sort">
+                {{ t(`sort.${sort}`) }}
+              </option>
+            </ui-select>
+          </div>
+        </ui-popover>
       </div>
       <home-workflow-card
-        v-for="workflow in pinnedWorkflows"
+        v-for="workflow in workflows"
         :key="workflow.id"
         :workflow="workflow"
         :tab="state.activeTab"
-        :pinned="true"
-        class="mb-2"
+        :pinned="state.pinnedWorkflows.includes(workflow.id)"
         @details="openWorkflowPage"
         @update="updateWorkflow(workflow.id, $event)"
         @execute="executeWorkflow"
@@ -121,59 +192,7 @@
         @delete="deleteWorkflow"
         @toggle-pin="togglePinWorkflow(workflow)"
       />
-    </div>
-    <div
-      :class="{ 'p-2 rounded-lg bg-white': pinnedWorkflows.length === 0 }"
-      class="flex items-center"
-    >
-      <ui-select v-model="state.activeFolder" class="flex-1">
-        <option value="">Folder (all)</option>
-        <option
-          v-for="folder in folderStore.items"
-          :key="folder.id"
-          :value="folder.id"
-        >
-          {{ folder.name }}
-        </option>
-      </ui-select>
-      <ui-popover class="ml-2">
-        <template #trigger>
-          <ui-button>
-            <v-remixicon name="riSortDesc" class="mr-2 -ml-1" />
-            <span>Sort</span>
-          </ui-button>
-        </template>
-        <div class="w-48">
-          <ui-select v-model="sortState.order" block placeholder="Sort order">
-            <option value="asc">Ascending</option>
-            <option value="desc">Descending</option>
-          </ui-select>
-          <ui-select
-            v-model="sortState.by"
-            :placeholder="t('sort.sortBy')"
-            block
-            class="mt-2 flex-1"
-          >
-            <option v-for="sort in sorts" :key="sort" :value="sort">
-              {{ t(`sort.${sort}`) }}
-            </option>
-          </ui-select>
-        </div>
-      </ui-popover>
-    </div>
-    <home-workflow-card
-      v-for="workflow in workflows"
-      :key="workflow.id"
-      :workflow="workflow"
-      :tab="state.activeTab"
-      :pinned="state.pinnedWorkflows.includes(workflow.id)"
-      @details="openWorkflowPage"
-      @update="updateWorkflow(workflow.id, $event)"
-      @execute="executeWorkflow"
-      @rename="renameWorkflow"
-      @delete="deleteWorkflow"
-      @toggle-pin="togglePinWorkflow(workflow)"
-    />
+    </template>
     <div
       v-if="state.showSettingsPopup"
       class="fixed bottom-5 left-0 m-4 rounded-lg bg-accent p-4 text-white shadow-md dark:text-black z-10"
@@ -217,6 +236,8 @@ import { computed, onMounted, shallowReactive, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import browser from 'webextension-polyfill';
 import { usePurchasedWorkflowStore } from '@/stores/purchasedWorkflow';
+import { ENV_HOST } from '@/common/utils/constant';
+import { RiRefreshLine } from '@remixicon/vue';
 
 const isMV2 = browser.runtime.getManifest().manifest_version === 2;
 
@@ -316,20 +337,8 @@ const workflows = computed(() => {
 
   return hostedWorkflows.value;
 });
-const showTab = computed(() => {
-  return (
-    hostedWorkflowStore.toArray.length > 0 ||
-    userStore.user?.teams?.length > 0 ||
-    purchasedWorkflowStore.toArray.length > 0
-  );
-});
+const showTab = true;
 
-function openDocs() {
-  window.open(
-    'https://docs.automa.site/guide/quick-start.html#recording-actions',
-    '_blank'
-  );
-}
 function closeSettingsPopup() {
   state.showSettingsPopup = false;
   localStorage.setItem('settingsPopup', false);
@@ -401,6 +410,9 @@ function deleteWorkflow({ id, hostId, name }) {
 function openDashboard(url) {
   BackgroundUtils.openDashboard(url);
 }
+function openTab(url) {
+  BackgroundUtils.openTab(url);
+}
 async function initElementSelector() {
   const [tab] = await browser.tabs.query({
     url: '*://*/*',
@@ -424,6 +436,31 @@ function openWorkflowPage({ id, hostId }) {
 function onTabChange(value) {
   localStorage.setItem('popup-tab', value);
 }
+async function reloadSidePanel() {
+  const [tab] = await browser.tabs.query({ active: true, currentWindow: true });
+  state.haveAccess = /^(https?)/.test(tab.url);
+
+  const storage = await browser.storage.local.get('pinnedWorkflows');
+  state.pinnedWorkflows = storage.pinnedWorkflows || [];
+
+  await workflowStore.loadData();
+
+  await folderStore.load();
+  await userStore.loadUser({ storage: localStorage, ttl: 1000 * 60 * 5 });
+  await teamWorkflowStore.loadData();
+  await purchasedWorkflowStore.fetchWorkflows();
+
+  await automa('app');
+
+  state.retrieved = true;
+
+  if (state.activeFolder) {
+    const folderExist = folderStore.items.some(
+      (folder) => folder.id === state.activeFolder
+    );
+    if (!folderExist) state.activeFolder = '';
+  }
+}
 
 watch(
   () => [sortState.by, sortState.order, state.activeFolder],
@@ -435,37 +472,7 @@ watch(
   }
 );
 
-onMounted(async () => {
-  const [tab] = await browser.tabs.query({ active: true, currentWindow: true });
-  state.haveAccess = /^(https?)/.test(tab.url);
-
-  const storage = await browser.storage.local.get('pinnedWorkflows');
-  state.pinnedWorkflows = storage.pinnedWorkflows || [];
-
-  await folderStore.load();
-  await userStore.loadUser({ storage: localStorage, ttl: 1000 * 60 * 5 });
-  await teamWorkflowStore.loadData();
-  await purchasedWorkflowStore.fetchWorkflows();
-
-  // let activeTab = localStorage.getItem('popup-tab') || 'local';
-  let activeTab = 'purchased';
-
-  await automa('app');
-
-  if (activeTab === 'team' && !userStore.user?.teams) activeTab = 'local';
-  else if (activeTab === 'host' && hostedWorkflowStore.toArray.length < 1)
-    activeTab = 'local';
-
-  state.retrieved = true;
-  state.activeTab = activeTab;
-
-  if (state.activeFolder) {
-    const folderExist = folderStore.items.some(
-      (folder) => folder.id === state.activeFolder
-    );
-    if (!folderExist) state.activeFolder = '';
-  }
-});
+onMounted(reloadSidePanel);
 </script>
 <style>
 .recording-card {
