@@ -365,7 +365,7 @@ function togglePinWorkflow(workflow) {
 const menu = [
   {
     id: 'copy-id',
-    name: 'Copy workflow id',
+    name: '复制工作流Id',
     icon: 'riFileCopyLine',
     action: (workflow) => {
       navigator.clipboard.writeText(workflow.id).catch((error) => {

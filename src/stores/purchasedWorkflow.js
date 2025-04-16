@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia';
 import { fetchApi, cacheApi } from '@/utils/api';
 import defu from 'defu';
+import { decryptData, encryptData } from '@vortana/src/workflow_crypto';
 import { useUserStore } from './user';
 
 export const usePurchasedWorkflowStore = defineStore('purchased-workflows', {
@@ -28,17 +29,24 @@ export const usePurchasedWorkflowStore = defineStore('purchased-workflows', {
         throw new Error('当前工作流已过期，请重新购买');
       }
 
+      const userStore = useUserStore();
+      const userId = userStore.user.id.replace(/-/g, '');
+      const encoder = new TextEncoder();
+      const key = encoder.encode(userId);
+
       if (target.ciphertext) {
-        return target.ciphertext; // todo 使用 workflow_crypto 解密
+        const json = await decryptData(target.ciphertext, key);
+        return JSON.parse(json);
       }
 
       const {
-        data: { workflow },
+        data: { encrypted_workflow },
       } = await (await fetchApi(`/me/workflows/leases/${id}`)).json();
-      // todo 使用workflow_crypto 解密并前端加密
-      target.ciphertext = workflow;
+      const json = await decryptData(encrypted_workflow);
+
+      target.ciphertext = await encryptData(json, key);
       await this.saveWorkflow();
-      return workflow;
+      return JSON.parse(json);
     },
     async fetchWorkflows(useCache = true) {
       const userStore = useUserStore();
@@ -61,7 +69,8 @@ export const usePurchasedWorkflowStore = defineStore('purchased-workflows', {
               ).getTime();
               item.termStart = new Date(item.term_starts).getTime();
               item.termEnd = new Date(item.term_ends).getTime();
-
+              item.version = item.workflow.latest_version;
+              delete item.workflow;
               acc[item.id] = item;
               return acc;
             }, {});
@@ -81,7 +90,20 @@ export const usePurchasedWorkflowStore = defineStore('purchased-workflows', {
       const localCache = purchased_workflow
         ? JSON.parse(purchased_workflow)
         : {};
+      for (const [id, item] of Object.entries(localCache)) {
+        if (!workflows[id]) {
+          workflows[id] = item;
+        } else {
+          const oldVersion = workflows[id].version.number;
+          workflows[id] = defu(workflows[id], item);
+          if (oldVersion !== workflows[id].version.number) {
+            delete workflows[id].ciphertext;
+            delete item.ciphertext;
+          }
+        }
+      }
       this.workflows = defu(workflows || {}, localCache);
+      this.saveWorkflow();
     },
   },
 });

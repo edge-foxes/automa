@@ -10,13 +10,13 @@ export async function fetchApi(path, options = {}) {
         url: secrets.baseApiUrl,
         name: 'session_id',
       })
-    ).value,
+    )?.value,
     _neoautoma_backend_session: (
       await BrowserAPIService.cookies.get({
         url: secrets.baseApiUrl,
         name: '_neoautoma_backend_session',
       })
-    ).value,
+    )?.value,
   };
   const headers = {
     'Content-Type': 'application/json',
@@ -43,7 +43,7 @@ export async function fetchApi(path, options = {}) {
 export async function cacheApi(key, callback, useCache = true) {
   const isBoolOpts = typeof useCache === 'boolean';
   const options = {
-    ttl: 10000 * 10,
+    ttl: 10000,
     storage: sessionStorage,
     useCache: isBoolOpts ? useCache : true,
   };

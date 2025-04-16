@@ -6,89 +6,91 @@
   >
     {{ workflow.tag }}
   </span>
-  <ui-card
-    v-if="!isTeam"
-    padding="p-1"
-    class="pointer-events-auto ml-4 flex items-center"
-  >
-    <ui-popover>
-      <template #trigger>
-        <button
-          v-tooltip.group="t('workflow.host.title')"
-          class="hoverable rounded-lg p-2"
-        >
-          <v-remixicon
-            :class="{ 'text-primary': hosted }"
-            name="riBaseStationLine"
-          />
-        </button>
-      </template>
-      <div :class="{ 'text-center': state.isUploadingHost }" class="w-64">
-        <div class="flex items-center text-gray-600 dark:text-gray-200">
-          <p>
-            {{ t('workflow.host.set') }}
-          </p>
-          <a
-            :title="t('common.docs')"
-            href="https://docs.automa.site/workflow/sharing-workflow.html#host-workflow"
-            target="_blank"
-            class="ml-1"
-          >
-            <v-remixicon name="riInformationLine" size="20" />
-          </a>
-          <div class="grow"></div>
-          <ui-spinner v-if="state.isUploadingHost" color="text-accent" />
-          <ui-switch
-            v-else
-            :model-value="Boolean(hosted)"
-            @change="setAsHostWorkflow"
-          />
-        </div>
-        <transition-expand>
-          <ui-input
-            v-if="hosted"
-            v-tooltip:bottom="t('workflow.host.id')"
-            :model-value="hosted.hostId"
-            prepend-icon="riLinkM"
-            readonly
-            class="mt-4 block w-full"
-            @click="$event.target.select()"
-          />
-        </transition-expand>
-      </div>
-    </ui-popover>
-    <ui-popover :disabled="userDontHaveTeamsAccess">
-      <template #trigger>
-        <button
-          v-tooltip.group="t('workflow.share.title')"
-          :class="{ 'text-primary': shared }"
-          class="hoverable rounded-lg p-2"
-          @click="shareWorkflow(!userDontHaveTeamsAccess)"
-        >
-          <v-remixicon name="riShareLine" />
-        </button>
-      </template>
-      <p class="font-semibold">Share the workflow</p>
-      <ui-list class="mt-2 w-56 space-y-1">
-        <ui-list-item
-          v-close-popover
-          class="cursor-pointer"
-          @click="shareWorkflowWithTeam"
-        >
-          <v-remixicon name="riTeamLine" class="-ml-1 mr-2" />
-          With your team
-        </ui-list-item>
-        <ui-list-item
-          v-close-popover
-          class="cursor-pointer"
-          @click="shareWorkflow()"
-        >
-          <v-remixicon name="riGroupLine" class="-ml-1 mr-2" />
-          With the community
-        </ui-list-item>
-      </ui-list>
-    </ui-popover>
-  </ui-card>
+  <!-- 暂且注释掉，不要删除 -->
+  <!--  <ui-card-->
+  <!--    v-if="!isTeam"-->
+  <!--    padding="p-1"-->
+  <!--    class="pointer-events-auto ml-4 flex items-center"-->
+  <!--  >-->
+  <!--    <ui-popover>-->
+  <!--      <template #trigger>-->
+  <!--        <button-->
+  <!--          v-tooltip.group="t('workflow.host.title')"-->
+  <!--          class="hoverable rounded-lg p-2"-->
+  <!--        >-->
+  <!--          <v-remixicon-->
+  <!--            :class="{ 'text-primary': hosted }"-->
+  <!--            name="riBaseStationLine"-->
+  <!--          />-->
+  <!--        </button>-->
+  <!--      </template>-->
+  <!--      <div :class="{ 'text-center': state.isUploadingHost }" class="w-64">-->
+  <!--        <div class="flex items-center text-gray-600 dark:text-gray-200">-->
+  <!--          <p>-->
+  <!--            {{ t('workflow.host.set') }}-->
+  <!--          </p>-->
+  <!--          <a-->
+  <!--            :title="t('common.docs')"-->
+  <!--            href="https://docs.automa.site/workflow/sharing-workflow.html#host-workflow"-->
+  <!--            target="_blank"-->
+  <!--            class="ml-1"-->
+  <!--          >-->
+  <!--            <v-remixicon name="riInformationLine" size="20" />-->
+  <!--          </a>-->
+  <!--          <div class="grow"></div>-->
+  <!--          <ui-spinner v-if="state.isUploadingHost" color="text-accent" />-->
+  <!--          <ui-switch-->
+  <!--            v-else-->
+  <!--            :model-value="Boolean(hosted)"-->
+  <!--            @change="setAsHostWorkflow"-->
+  <!--          />-->
+  <!--        </div>-->
+  <!--        <transition-expand>-->
+  <!--          <ui-input-->
+  <!--            v-if="hosted"-->
+  <!--            v-tooltip:bottom="t('workflow.host.id')"-->
+  <!--            :model-value="hosted.hostId"-->
+  <!--            prepend-icon="riLinkM"-->
+  <!--            readonly-->
+  <!--            class="mt-4 block w-full"-->
+  <!--            @click="$event.target.select()"-->
+  <!--          />-->
+  <!--        </transition-expand>-->
+  <!--      </div>-->
+  <!--    </ui-popover>-->
+  <!--    <ui-popover :disabled="userDontHaveTeamsAccess">-->
+  <!--      <template #trigger>-->
+  <!--        <button-->
+  <!--          v-tooltip.group="t('workflow.share.title')"-->
+  <!--          :class="{ 'text-primary': shared }"-->
+  <!--          class="hoverable rounded-lg p-2"-->
+  <!--          @click="shareWorkflow(!userDontHaveTeamsAccess)"-->
+  <!--        >-->
+  <!--          <v-remixicon name="riShareLine" />-->
+  <!--        </button>-->
+  <!--      </template>-->
+  <!--      <p class="font-semibold">Share the workflow</p>-->
+  <!--      <ui-list class="mt-2 w-56 space-y-1">-->
+  <!--        <ui-list-item-->
+  <!--          v-close-popover-->
+  <!--          class="cursor-pointer"-->
+  <!--          @click="shareWorkflowWithTeam"-->
+  <!--        >-->
+  <!--          <v-remixicon name="riTeamLine" class="-ml-1 mr-2" />-->
+  <!--          With your team-->
+  <!--        </ui-list-item>-->
+  <!--        <ui-list-item-->
+  <!--          v-close-popover-->
+  <!--          class="cursor-pointer"-->
+  <!--          @click="shareWorkflow()"-->
+  <!--        >-->
+  <!--          <v-remixicon name="riGroupLine" class="-ml-1 mr-2" />-->
+  <!--          With the community-->
+  <!--        </ui-list-item>-->
+  <!--      </ui-list>-->
+  <!--    </ui-popover>-->
+  <!--  </ui-card>-->
+
   <ui-card
     v-if="canEdit"
     padding="p-1 ml-4 hidden md:block pointer-events-auto"
@@ -181,7 +183,7 @@
           @click="copyWorkflowId"
         >
           <v-remixicon name="riFileCopyLine" class="mr-2 -ml-1" />
-          Copy workflow Id
+          复制工作流Id
         </ui-list-item>
         <ui-list-item
           v-if="isTeam && canEdit"
@@ -339,11 +341,10 @@ import WorkflowShareTeam from '@/components/newtab/workflow/WorkflowShareTeam.vu
 import { useDialog } from '@/composable/dialog';
 import { useGroupTooltip } from '@/composable/groupTooltip';
 import { getShortcut, useShortcut } from '@/composable/shortcut';
-import BrowserAPIService from '@/service/browser-api/BrowserAPIService';
 import RendererWorkflowService from '@/service/renderer/RendererWorkflowService';
 import { useStore } from '@/stores/main';
 import { usePackageStore } from '@/stores/package';
-import { useSharedWorkflowStore } from '@/stores/sharedWorkflow';
+// import { useSharedWorkflowStore } from '@/stores/sharedWorkflow';
 import { useTeamWorkflowStore } from '@/stores/teamWorkflow';
 import { useUserStore } from '@/stores/user';
 import { useWorkflowStore } from '@/stores/workflow';
@@ -397,7 +398,7 @@ const userStore = useUserStore();
 const packageStore = usePackageStore();
 const workflowStore = useWorkflowStore();
 const teamWorkflowStore = useTeamWorkflowStore();
-const sharedWorkflowStore = useSharedWorkflowStore();
+// const sharedWorkflowStore = useSharedWorkflowStore();
 const shortcuts = useShortcut([
   /* eslint-disable-next-line */
   getShortcut('editor:save', saveWorkflow),
@@ -420,15 +421,15 @@ const renameState = reactive({
   showModal: false,
 });
 
-const shared = computed(() => sharedWorkflowStore.getById(props.workflow.id));
+// const shared = computed(() => sharedWorkflowStore.getById(props.workflow.id));
 const hosted = computed(() => userStore.hostedWorkflows[props.workflow.id]);
-const userDontHaveTeamsAccess = computed(() => {
-  if (props.isTeam || !userStore.user?.teams) return true;
-
-  return !userStore.user.teams.some((team) =>
-    team.access.some((item) => ['owner', 'create'].includes(item))
-  );
-});
+// const userDontHaveTeamsAccess = computed(() => {
+//   if (props.isTeam || !userStore.user?.teams) return true;
+//
+//   return !userStore.user.teams.some((team) =>
+//     team.access.some((item) => ['owner', 'create'].includes(item))
+//   );
+// });
 
 function updateWorkflow(data = {}, changedIndicator = false) {
   let store = null;
@@ -515,111 +516,113 @@ async function executeCurrWorkflow() {
     saveWorkflow();
   }
 
-  console.log('准备执行了', props.workflow);
-
-  const result = await BrowserAPIService.windows.getCurrent();
-  console.log('通过调用windows.getCurrent的结果', result);
+  // console.log('准备执行了', props.workflow);
+  //
+  // const result = await BrowserAPIService.windows.getCurrent();
+  // console.log('通过调用windows.getCurrent的结果', result);
 
   RendererWorkflowService.executeWorkflow({
     ...props.workflow,
     isTesting: props.isDataChanged,
   });
 }
-async function setAsHostWorkflow(isHost) {
-  if (!userStore.user) {
-    dialog.custom('auth', {
-      title: t('auth.title'),
-    });
-    return;
-  }
 
-  state.isUploadingHost = true;
+// async function setAsHostWorkflow(isHost) {
+//   if (!userStore.user) {
+//     dialog.custom('auth', {
+//       title: t('auth.title'),
+//     });
+//     return;
+//   }
+//
+//   state.isUploadingHost = true;
+//
+//   try {
+//     let url = '/me/workflows';
+//     let config = {};
+//
+//     if (isHost) {
+//       const workflowPaylod = convertWorkflow(props.workflow, ['id']);
+//       workflowPaylod.drawflow = parseJSON(
+//         props.workflow.drawflow,
+//         props.workflow.drawflow
+//       );
+//       delete workflowPaylod.extVersion;
+//
+//       url += `/host`;
+//       config = {
+//         auth: true,
+//         method: 'POST',
+//         body: JSON.stringify({
+//           workflow: workflowPaylod,
+//         }),
+//       };
+//     } else {
+//       url += `?id=${props.workflow.id}&type=host`;
+//       config = {
+//         method: 'DELETE',
+//         auth: true,
+//       };
+//     }
+//
+//     const response = await fetchApi(url, config);
+//     const result = await response.json();
+//
+//     if (!response.ok) {
+//       const error = new Error(result.msg);
+//       error.data = result.data;
+//
+//       throw error;
+//     }
+//     if (result.code) {
+//       const error = new Error(result.msg);
+//       error.data = result.data;
+//
+//       throw error;
+//     }
+//
+//     if (isHost) {
+//       const v = result.data;
+//       v.hostId = v.id;
+//       userStore.hostedWorkflows[props.workflow.id] = v;
+//     } else {
+//       delete userStore.hostedWorkflows[props.workflow.id];
+//     }
+//
+//     // Update cache
+//     const userWorkflows = parseJSON('user-workflows', {
+//       backup: [],
+//       hosted: {},
+//     });
+//     userWorkflows.hosted = userStore.hostedWorkflows;
+//     sessionStorage.setItem('user-workflows', JSON.stringify(userWorkflows));
+//
+//     state.isUploadingHost = false;
+//   } catch (error) {
+//     console.error(error);
+//     state.isUploadingHost = false;
+//     toast.error(error.message);
+//   }
+// }
+// function shareWorkflowWithTeam() {
+//   emit('modal', 'workflow-share-team');
+// }
+// function shareWorkflow(disabled = false) {
+//   if (disabled) return;
+//   if (shared.value) {
+//     router.push(`/workflows/${props.workflow.id}/shared`);
+//     return;
+//   }
+//
+//   if (userStore.user) {
+//     emit('modal', 'workflow-share');
+//   } else {
+//     dialog.custom('auth', {
+//       title: t('auth.title'),
+//     });
+//   }
+// }
 
-  try {
-    let url = '/me/workflows';
-    let config = {};
-
-    if (isHost) {
-      const workflowPaylod = convertWorkflow(props.workflow, ['id']);
-      workflowPaylod.drawflow = parseJSON(
-        props.workflow.drawflow,
-        props.workflow.drawflow
-      );
-      delete workflowPaylod.extVersion;
-
-      url += `/host`;
-      config = {
-        auth: true,
-        method: 'POST',
-        body: JSON.stringify({
-          workflow: workflowPaylod,
-        }),
-      };
-    } else {
-      url += `?id=${props.workflow.id}&type=host`;
-      config = {
-        method: 'DELETE',
-        auth: true,
-      };
-    }
-
-    const response = await fetchApi(url, config);
-    const result = await response.json();
-
-    if (!response.ok) {
-      const error = new Error(result.msg);
-      error.data = result.data;
-
-      throw error;
-    }
-    if (result.code) {
-      const error = new Error(result.msg);
-      error.data = result.data;
-
-      throw error;
-    }
-
-    if (isHost) {
-      const v = result.data;
-      v.hostId = v.id;
-      userStore.hostedWorkflows[props.workflow.id] = v;
-    } else {
-      delete userStore.hostedWorkflows[props.workflow.id];
-    }
-
-    // Update cache
-    const userWorkflows = parseJSON('user-workflows', {
-      backup: [],
-      hosted: {},
-    });
-    userWorkflows.hosted = userStore.hostedWorkflows;
-    sessionStorage.setItem('user-workflows', JSON.stringify(userWorkflows));
-
-    state.isUploadingHost = false;
-  } catch (error) {
-    console.error(error);
-    state.isUploadingHost = false;
-    toast.error(error.message);
-  }
-}
-function shareWorkflowWithTeam() {
-  emit('modal', 'workflow-share-team');
-}
-function shareWorkflow(disabled = false) {
-  if (disabled) return;
-  if (shared.value) {
-    router.push(`/workflows/${props.workflow.id}/shared`);
-    return;
-  }
-
-  if (userStore.user) {
-    emit('modal', 'workflow-share');
-  } else {
-    dialog.custom('auth', {
-      title: t('auth.title'),
-    });
-  }
-}
 function deleteFromTeam() {
   dialog.confirm({
     async: true,

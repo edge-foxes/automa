@@ -93,48 +93,63 @@
               </ui-list-item>
             </ui-list>
           </ui-expand>
-          <ui-expand
-            :model-value="true"
-            append-icon
-            header-class="px-4 py-2 rounded-lg hoverable w-full flex items-center"
+
+          <ui-list-item
+            tag="button"
+            :active="state.activeTab === 'local'"
+            @click="updateActiveTab({ activeTab: 'local' })"
           >
-            <template #header>
-              <v-remixicon name="riFlowChart" />
-              <span class="ml-4 flex-1 text-left capitalize">
-                {{ t('workflow.my') }}
-              </span>
-            </template>
-            <ui-list class="mt-1 space-y-1">
-              <ui-list-item
-                tag="button"
-                :active="state.activeTab === 'local'"
-                color="bg-box-transparent font-semibold"
-                class="pl-14"
-                @click="updateActiveTab({ activeTab: 'local' })"
-              >
-                <span class="capitalize">
-                  {{ t('workflow.type.local') }}
-                </span>
-              </ui-list-item>
-              <ui-list-item
-                v-if="hostedWorkflows?.length > 0"
-                :active="state.activeTab === 'host'"
-                color="bg-box-transparent font-semibold"
-                tag="button"
-                class="pl-14"
-                @click="updateActiveTab({ activeTab: 'host' })"
-              >
-                <span class="capitalize">
-                  {{ t('workflow.type.host') }}
-                </span>
-              </ui-list-item>
-            </ui-list>
-          </ui-expand>
+            <v-remixicon name="riFlowChart" />
+            <span class="ml-4 capitalize">
+              {{ t('workflow.my') }}
+            </span>
+          </ui-list-item>
+
+          <!--    暂时注释掉，不要删除      -->
+          <!--          <ui-expand-->
+          <!--            :model-value="true"-->
+          <!--            append-icon-->
+          <!--            header-class="px-4 py-2 rounded-lg hoverable w-full flex items-center"-->
+          <!--          >-->
+          <!--            <template #header>-->
+          <!--              <v-remixicon name="riFlowChart" />-->
+          <!--              <span class="ml-4 flex-1 text-left capitalize">-->
+          <!--                {{ t('workflow.my') }}-->
+          <!--              </span>-->
+          <!--            </template>-->
+          <!--            <ui-list class="mt-1 space-y-1">-->
+          <!--              <ui-list-item-->
+          <!--                tag="button"-->
+          <!--                :active="state.activeTab === 'local'"-->
+          <!--                color="bg-box-transparent font-semibold"-->
+          <!--                class="pl-14"-->
+          <!--                @click="updateActiveTab({ activeTab: 'local' })"-->
+          <!--              >-->
+          <!--                <span class="capitalize">-->
+          <!--                  {{ t('workflow.type.local') }}-->
+          <!--                </span>-->
+          <!--              </ui-list-item>-->
+          <!--              <ui-list-item-->
+          <!--                v-if="hostedWorkflows?.length > 0"-->
+          <!--                :active="state.activeTab === 'host'"-->
+          <!--                color="bg-box-transparent font-semibold"-->
+          <!--                tag="button"-->
+          <!--                class="pl-14"-->
+          <!--                @click="updateActiveTab({ activeTab: 'host' })"-->
+          <!--              >-->
+          <!--                <span class="capitalize">-->
+          <!--                  {{ t('workflow.type.host') }}-->
+          <!--                </span>-->
+          <!--              </ui-list-item>-->
+          <!--            </ui-list>-->
+          <!--          </ui-expand>-->
+          <!--          -->
         </ui-list>
-        <workflows-folder
-          v-if="state.activeTab === 'local'"
-          v-model="state.activeFolder"
-        />
+        <!--   隐藏文件夹选择入口     -->
+        <!--        <workflows-folder-->
+        <!--          v-if="state.activeTab === 'local'"-->
+        <!--          v-model="state.activeFolder"-->
+        <!--        />-->
       </div>
       <div
         class="workflows-list flex-1 lg:ml-8"
@@ -337,7 +352,7 @@ import { importWorkflow, getWorkflowPermissions } from '@/utils/workflowData';
 import recordWorkflow from '@/newtab/utils/startRecordWorkflow';
 import WorkflowsLocal from '@/components/newtab/workflows/WorkflowsLocal.vue';
 import WorkflowsHosted from '@/components/newtab/workflows/WorkflowsHosted.vue';
-import WorkflowsFolder from '@/components/newtab/workflows/WorkflowsFolder.vue';
+// import WorkflowsFolder from '@/components/newtab/workflows/WorkflowsFolder.vue';
 import WorkflowsUserTeam from '@/components/newtab/workflows/WorkflowsUserTeam.vue';
 import { RiStore2Line, RiHammerLine } from '@remixicon/vue';
 import WorkflowsPurchased from '@/components/newtab/workflows/WorkflowsPurchased.vue';
