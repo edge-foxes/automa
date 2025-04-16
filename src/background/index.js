@@ -1053,3 +1053,7 @@ message.on('downloads:watch-changed', async ({ downloadId, onComplete }) => {
 automa('background', message);
 
 browser.runtime.onMessage.addListener(message.listener);
+
+browser.action.onClicked.addListener((tab) => {
+  browser.sidePanel.open({ windowId: tab.windowId });
+});

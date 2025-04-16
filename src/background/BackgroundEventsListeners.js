@@ -76,9 +76,7 @@ async function handleScheduleBackup() {
 }
 
 class BackgroundEventsListeners {
-  static onActionClicked() {
-    BackgroundUtils.openDashboard();
-  }
+  static onActionClicked() {}
 
   static onCommand(name) {
     if (name === 'open-dashboard') {

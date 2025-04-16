@@ -226,7 +226,7 @@
           <span>Delete from team</span>
         </ui-list-item>
         <ui-list-item
-          v-if="!hosted"
+          v-if="!hosted && userStore.user.is_admin"
           v-close-popover
           class="cursor-pointer"
           @click="onSellClick"

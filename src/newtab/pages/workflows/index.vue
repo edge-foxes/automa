@@ -35,13 +35,13 @@
               >
                 {{ t('home.record.title') }}
               </ui-list-item>
-              <ui-list-item
-                v-close-popover
-                class="cursor-pointer"
-                @click="addHostedWorkflow"
-              >
-                {{ t('workflow.host.add') }}
-              </ui-list-item>
+              <!--              <ui-list-item-->
+              <!--                v-close-popover-->
+              <!--                class="cursor-pointer"-->
+              <!--                @click="addHostedWorkflow"-->
+              <!--              >-->
+              <!--                {{ t('workflow.host.add') }}-->
+              <!--              </ui-list-item>-->
             </ui-list>
           </ui-popover>
         </div>
@@ -196,13 +196,13 @@
                 >
                   {{ t('home.record.title') }}
                 </ui-list-item>
-                <ui-list-item
-                  v-close-popover
-                  class="cursor-pointer"
-                  @click="addHostedWorkflow"
-                >
-                  {{ t('workflow.host.add') }}
-                </ui-list-item>
+                <!--                <ui-list-item-->
+                <!--                  v-close-popover-->
+                <!--                  class="cursor-pointer"-->
+                <!--                  @click="addHostedWorkflow"-->
+                <!--                >-->
+                <!--                  {{ t('workflow.host.add') }}-->
+                <!--                </ui-list-item>-->
               </ui-list>
             </ui-popover>
           </div>
@@ -337,17 +337,17 @@
 import { computed, shallowReactive, watch, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRouter } from 'vue-router';
-import { useToast } from 'vue-toastification';
-import { useDialog } from '@/composable/dialog';
+// import { useToast } from 'vue-toastification';
+// import { useDialog } from '@/composable/dialog';
 import { useShortcut } from '@/composable/shortcut';
 import { useGroupTooltip } from '@/composable/groupTooltip';
-import { fetchApi } from '@/utils/api';
+// import { fetchApi } from '@/utils/api';
 import { useUserStore } from '@/stores/user';
 import { useWorkflowStore } from '@/stores/workflow';
 import { useTeamWorkflowStore } from '@/stores/teamWorkflow';
 import { useHostedWorkflowStore } from '@/stores/hostedWorkflow';
-import { registerWorkflowTrigger } from '@/utils/workflowTrigger';
-import { isWhitespace, findTriggerBlock } from '@/utils/helper';
+// import { registerWorkflowTrigger } from '@/utils/workflowTrigger';
+// import { isWhitespace, findTriggerBlock } from '@/utils/helper';
 import { importWorkflow, getWorkflowPermissions } from '@/utils/workflowData';
 import recordWorkflow from '@/newtab/utils/startRecordWorkflow';
 import WorkflowsLocal from '@/components/newtab/workflows/WorkflowsLocal.vue';
@@ -361,8 +361,8 @@ import { ENV_HOST } from '@/common/utils/constant';
 useGroupTooltip();
 
 const { t } = useI18n();
-const toast = useToast();
-const dialog = useDialog();
+// const toast = useToast();
+// const dialog = useDialog();
 const router = useRouter();
 const userStore = useUserStore();
 const workflowStore = useWorkflowStore();
@@ -453,71 +453,73 @@ async function checkWorkflowPermissions(workflows) {
   permissionState.items = requiredPermissions;
   permissionState.showModal = true;
 }
-function addHostedWorkflow() {
-  dialog.prompt({
-    async: true,
-    inputType: 'url',
-    okText: t('common.add'),
-    title: t('workflow.host.add'),
-    label: t('workflow.host.id'),
-    placeholder: 'abcd123',
-    onConfirm: async (value) => {
-      if (isWhitespace(value)) return false;
-      const hostId = value.replace(/\s/g, '');
 
-      try {
-        if (!userStore.user && hostedWorkflowStore.toArray.length >= 3)
-          throw new Error('rate-exceeded');
+// function addHostedWorkflow() {
+//   dialog.prompt({
+//     async: true,
+//     inputType: 'url',
+//     okText: t('common.add'),
+//     title: t('workflow.host.add'),
+//     label: t('workflow.host.id'),
+//     placeholder: 'abcd123',
+//     onConfirm: async (value) => {
+//       if (isWhitespace(value)) return false;
+//       const hostId = value.replace(/\s/g, '');
+//
+//       try {
+//         if (!userStore.user && hostedWorkflowStore.toArray.length >= 3)
+//           throw new Error('rate-exceeded');
+//
+//         const isTheUserHost = userStore.getHostedWorkflows.some(
+//           (host) => hostId === host.hostId
+//         );
+//         if (isTheUserHost) throw new Error('exist');
+//
+//         const response = await fetchApi('/workflows/hosted', {
+//           auth: true,
+//           method: 'POST',
+//           body: JSON.stringify({ hostId }),
+//         });
+//         let result = await response.json();
+//
+//         if (!response.ok) {
+//           const error = new Error(result.msg);
+//           error.data = result.data;
+//
+//           throw error;
+//         }
+//
+//         result = result.data[0].data;
+//
+//         if (result === null) throw new Error('not-found');
+//
+//         result.hostId = `${hostId}`;
+//         result.createdAt = Date.now();
+//
+//         await checkWorkflowPermissions([result]);
+//         await hostedWorkflowStore.insert(result, hostId);
+//
+//         const triggerBlock = findTriggerBlock(result.drawflow);
+//         await registerWorkflowTrigger(hostId, triggerBlock);
+//
+//         return true;
+//       } catch (error) {
+//         console.error(error);
+//         const messages = {
+//           exists: t('workflow.host.messages.hostExist'),
+//           'rate-exceeded': t('message.rateExceeded'),
+//           'not-found': t('workflow.host.messages.notFound', { id: hostId }),
+//         };
+//         const errorMessage = messages[error.message] || error.message;
+//
+//         toast.error(errorMessage);
+//
+//         return false;
+//       }
+//     },
+//   });
+// }
 
-        const isTheUserHost = userStore.getHostedWorkflows.some(
-          (host) => hostId === host.hostId
-        );
-        if (isTheUserHost) throw new Error('exist');
-
-        const response = await fetchApi('/workflows/hosted', {
-          auth: true,
-          method: 'POST',
-          body: JSON.stringify({ hostId }),
-        });
-        let result = await response.json();
-
-        if (!response.ok) {
-          const error = new Error(result.msg);
-          error.data = result.data;
-
-          throw error;
-        }
-
-        result = result.data[0].data;
-
-        if (result === null) throw new Error('not-found');
-
-        result.hostId = `${hostId}`;
-        result.createdAt = Date.now();
-
-        await checkWorkflowPermissions([result]);
-        await hostedWorkflowStore.insert(result, hostId);
-
-        const triggerBlock = findTriggerBlock(result.drawflow);
-        await registerWorkflowTrigger(hostId, triggerBlock);
-
-        return true;
-      } catch (error) {
-        console.error(error);
-        const messages = {
-          exists: t('workflow.host.messages.hostExist'),
-          'rate-exceeded': t('message.rateExceeded'),
-          'not-found': t('workflow.host.messages.notFound', { id: hostId }),
-        };
-        const errorMessage = messages[error.message] || error.message;
-
-        toast.error(errorMessage);
-
-        return false;
-      }
-    },
-  });
-}
 async function openImportDialog() {
   try {
     const workflows = await importWorkflow({ multiple: true });

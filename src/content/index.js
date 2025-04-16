@@ -5,6 +5,7 @@ import automa from '@business';
 import cloneDeep from 'lodash.clonedeep';
 import { nanoid } from 'nanoid';
 import browser from 'webextension-polyfill';
+import { debounce } from 'lodash';
 import blocksHandler from './blocksHandler';
 import initCommandPalette from './commandPalette';
 import handleSelector, {
@@ -378,9 +379,37 @@ window.addEventListener('DOMContentLoaded', async () => {
   alert('Workflow installed');
 });
 
-document.addEventListener('xuanta:open-dashboard', () => {
-  sendMessage('open:dashboard', '', 'background');
-});
-document.addEventListener('xuanta:open-dashboard-in-current-tab', () => {
-  sendMessage('open:dashboard-in-current-tab', '', 'background');
-});
+document.addEventListener(
+  'xuanta:open-dashboard',
+  debounce(
+    async () => {
+      try {
+        await sendMessage('open:dashboard', '', 'background');
+      } catch (err) {
+        if (err?.message.includes('Extension context invalidated')) {
+          alert(
+            '插件状态发生变化，请确保旋塔automa插件已经启用，刷新当前页面并重试'
+          );
+        }
+      }
+    },
+    500,
+    {
+      trailing: false,
+      leading: true,
+    }
+  )
+);
+document.addEventListener(
+  'xuanta:open-dashboard-in-current-tab',
+  debounce(
+    () => {
+      sendMessage('open:dashboard-in-current-tab', '', 'background');
+    },
+    500,
+    {
+      tailing: false,
+      leading: true,
+    }
+  )
+);

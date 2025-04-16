@@ -55,6 +55,12 @@
       class="mt-1"
       @change="onTabChange"
     >
+      <ui-tab
+        v-if="purchasedWorkflowStore.toArray.length > 0"
+        value="purchased"
+      >
+        已购
+      </ui-tab>
       <ui-tab value="local">
         {{ t(`home.workflow.type.local`) }}
       </ui-tab>
@@ -62,12 +68,6 @@
         {{ t(`home.workflow.type.host`) }}
       </ui-tab>
       <ui-tab v-if="userStore.user?.teams?.length" value="team"> Teams </ui-tab>
-      <ui-tab
-        v-if="purchasedWorkflowStore.toArray.length > 0"
-        value="purchased"
-      >
-        已购
-      </ui-tab>
     </ui-tabs>
   </div>
   <home-team-workflows
@@ -245,7 +245,7 @@ const state = shallowReactive({
   cardHeight: 255,
   retrieved: false,
   haveAccess: true,
-  activeTab: 'local',
+  activeTab: 'purchased',
   pinnedWorkflows: [],
   activeFolder: savedSorts.activeFolder,
   showSettingsPopup: isMV2
@@ -447,7 +447,8 @@ onMounted(async () => {
   await teamWorkflowStore.loadData();
   await purchasedWorkflowStore.fetchWorkflows();
 
-  let activeTab = localStorage.getItem('popup-tab') || 'local';
+  // let activeTab = localStorage.getItem('popup-tab') || 'local';
+  let activeTab = 'purchased';
 
   await automa('app');
 

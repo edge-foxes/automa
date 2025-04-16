@@ -403,13 +403,17 @@ const menu = [
     icon: 'riDeleteBin7Line',
     action: deleteWorkflow,
   },
-  {
-    id: 'sell',
-    name: t('global.sell'),
-    action: (workflow) => {
-      workflowStore.sell(workflow);
-    },
-  },
+  ...(userStore.user.is_admin
+    ? [
+        {
+          id: 'sell',
+          name: t('global.sell'),
+          action: (workflow) => {
+            workflowStore.sell(workflow);
+          },
+        },
+      ]
+    : []),
 ];
 
 watch(

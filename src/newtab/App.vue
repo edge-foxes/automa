@@ -23,44 +23,46 @@
         </div>
       </template>
     </ui-dialog>
-    <div
-      v-if="isUpdated"
-      class="fixed bottom-8 left-1/2 z-50 max-w-xl -translate-x-1/2 text-white dark:text-gray-900"
-    >
-      <div class="flex items-center rounded-lg bg-accent p-4 shadow-2xl">
-        <v-remixicon name="riInformationLine" class="mr-3" />
-        <p>
-          {{ t('updateMessage.text1', { version: currentVersion }) }}
-        </p>
-        <a
-          :href="`https://github.com/AutomaApp/automa/releases/latest`"
-          target="_blank"
-          rel="noopener"
-          class="ml-1 underline"
-        >
-          {{ t('updateMessage.text2') }}
-        </a>
-        <div class="flex-1" />
-        <button
-          class="ml-6 text-gray-200 dark:text-gray-600"
-          @click="isUpdated = false"
-        >
-          <v-remixicon size="20" name="riCloseLine" />
-        </button>
-      </div>
-      <div class="mt-4 flex items-center rounded-lg bg-accent p-4 shadow-2xl">
-        <v-remixicon name="riInformationLine" class="mr-3 shrink-0" />
-        <p>
-          Export your Automa workflows as a standalone extension using
-          <a
-            href="https://docs.automa.site/extension-builder/"
-            target="_blank"
-            class="underline"
-            >Automa Chrome Extension Builder</a
-          >
-        </p>
-      </div>
-    </div>
+
+    <!--    <div-->
+    <!--      v-if="isUpdated"-->
+    <!--      class="fixed bottom-8 left-1/2 z-50 max-w-xl -translate-x-1/2 text-white dark:text-gray-900"-->
+    <!--    >-->
+    <!--      <div class="flex items-center rounded-lg bg-accent p-4 shadow-2xl">-->
+    <!--        <v-remixicon name="riInformationLine" class="mr-3" />-->
+    <!--        <p>-->
+    <!--          {{ t('updateMessage.text1', { version: currentVersion }) }}-->
+    <!--        </p>-->
+    <!--        <a-->
+    <!--          :href="`https://github.com/AutomaApp/automa/releases/latest`"-->
+    <!--          target="_blank"-->
+    <!--          rel="noopener"-->
+    <!--          class="ml-1 underline"-->
+    <!--        >-->
+    <!--          {{ t('updateMessage.text2') }}-->
+    <!--        </a>-->
+    <!--        <div class="flex-1" />-->
+    <!--        <button-->
+    <!--          class="ml-6 text-gray-200 dark:text-gray-600"-->
+    <!--          @click="isUpdated = false"-->
+    <!--        >-->
+    <!--          <v-remixicon size="20" name="riCloseLine" />-->
+    <!--        </button>-->
+    <!--      </div>-->
+    <!--      <div class="mt-4 flex items-center rounded-lg bg-accent p-4 shadow-2xl">-->
+    <!--        <v-remixicon name="riInformationLine" class="mr-3 shrink-0" />-->
+    <!--        <p>-->
+    <!--          Export your Automa workflows as a standalone extension using-->
+    <!--          <a-->
+    <!--            href="https://docs.automa.site/extension-builder/"-->
+    <!--            target="_blank"-->
+    <!--            class="underline"-->
+    <!--            >Automa Chrome Extension Builder</a-->
+    <!--          >-->
+    <!--        </p>-->
+    <!--      </div>-->
+    <!--    </div>-->
+
     <shared-permissions-modal
       v-model="permissionState.showModal"
       :permissions="permissionState.items"

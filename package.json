@@ -1,6 +1,6 @@
 {
   "name": "旋塔Automa",
-  "version": "1.0.2",
+  "version": "1.0.5",
   "description": "浏览器自动化工具, powered by automa 1.29.9",
   "scripts": {
     "build": "node utils/build.js",
@@ -70,6 +70,7 @@
     "jsonpath": "^1.1.1",
     "jspdf": "^2.5.1",
     "loader-utils": "^3.2.1",
+    "lodash": "^4.17.21",
     "lodash.clonedeep": "^4.5.0",
     "lodash.merge": "^4.6.2",
     "mitt": "^3.0.0",
