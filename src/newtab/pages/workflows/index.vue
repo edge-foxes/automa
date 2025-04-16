@@ -356,10 +356,10 @@ import WorkflowsHosted from '@/components/newtab/workflows/WorkflowsHosted.vue';
 import WorkflowsUserTeam from '@/components/newtab/workflows/WorkflowsUserTeam.vue';
 import { RiStore2Line, RiHammerLine } from '@remixicon/vue';
 import WorkflowsPurchased from '@/components/newtab/workflows/WorkflowsPurchased.vue';
+import { ENV_HOST } from '@/common/utils/constant';
 
 useGroupTooltip();
 
-const { ENV_HOST } = process.env;
 const { t } = useI18n();
 const toast = useToast();
 const dialog = useDialog();

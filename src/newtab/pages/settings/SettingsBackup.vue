@@ -48,7 +48,7 @@
         </p>
         <ui-button
           tag="a"
-          href="https://automa.site/auth"
+          :href="`${AUTH_URL}?from=xuanta_dashboard`"
           target="_blank"
           class="mt-4 inline-block w-44"
         >
@@ -223,6 +223,7 @@ import { useWorkflowStore } from '@/stores/workflow';
 import { useHasPermissions } from '@/composable/hasPermissions';
 import { fileSaver, openFilePicker, parseJSON } from '@/utils/helper';
 import SettingsCloudBackup from '@/components/newtab/settings/SettingsCloudBackup.vue';
+import { AUTH_URL } from '@/common/utils/constant';
 
 const BACKUP_SCHEDULES = {
   '0 8 * * *': 'Every day',
