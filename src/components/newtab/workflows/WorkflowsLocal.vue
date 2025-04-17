@@ -403,7 +403,7 @@ const menu = [
     icon: 'riDeleteBin7Line',
     action: deleteWorkflow,
   },
-  ...(userStore.user.is_admin
+  ...(userStore.user?.is_admin
     ? [
         {
           id: 'sell',
