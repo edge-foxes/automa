@@ -82,16 +82,49 @@
         :tab="state.activeTab"
         @execute="executePurchasedWorkflow"
       />
+
+      <div style="height: 30px" />
+
+      <div class="goto-shop-btn">
+        <ui-button
+          style="width: 100%"
+          variant="accent"
+          class="mt-6"
+          @click="openTab(`https://${ENV_HOST}/products`)"
+        >
+          获取更多工作流
+        </ui-button>
+      </div>
     </template>
     <ui-card v-else class="text-center">
-      <img src="@/assets/svg/alien.svg" />
-      <p class="font-semibold">{{ t('message.empty') }}</p>
+      <div style="text-align: center; font-weight: bolder; font-size: 16px">
+        发现优质工作流
+      </div>
+      <div style="text-align: center; font-size: 14px">
+        立即获取专业级自动化工作流
+      </div>
+
+      <div
+        v-for="item in state.suggestedWorkflows.slice(0, 3)"
+        :key="item.id"
+        class="suggested-workflow"
+        @click="openTab(`https://${ENV_HOST}/products/${item.id}`)"
+      >
+        <div class="summary">
+          <div class="name">{{ item.name }}</div>
+          <div class="desc">{{ item.description }}</div>
+        </div>
+
+        <RiArrowRightSLine class="goto-btn" />
+      </div>
+
       <ui-button
+        style="width: 100%"
         variant="accent"
         class="mt-6"
         @click="openTab(`https://${ENV_HOST}/products`)"
       >
-        购买工作流
+        查看更多工作流
       </ui-button>
     </ui-card>
   </div>
@@ -193,28 +226,28 @@
         @toggle-pin="togglePinWorkflow(workflow)"
       />
     </template>
-    <div
-      v-if="state.showSettingsPopup"
-      class="fixed bottom-5 left-0 m-4 rounded-lg bg-accent p-4 text-white shadow-md dark:text-black z-10"
-    >
-      <p class="text-sm leading-tight">
-        If the workflow runs for less than 5 minutes, set it to run in the
-        background in the
-        <a
-          href="https://docs.automa.site/workflow/settings.html#workflow-execution"
-          class="font-semibold underline"
-          target="_blank"
-        >
-          workflow settings.
-        </a>
-      </p>
-      <v-remixicon
-        name="riCloseLine"
-        class="absolute top-2 right-2 cursor-pointer text-gray-300 dark:text-gray-600"
-        size="20"
-        @click="closeSettingsPopup"
-      />
-    </div>
+    <!--    <div-->
+    <!--      v-if="state.showSettingsPopup"-->
+    <!--      class="fixed bottom-5 left-0 m-4 rounded-lg bg-accent p-4 text-white shadow-md dark:text-black z-10"-->
+    <!--    >-->
+    <!--      <p class="text-sm leading-tight">-->
+    <!--        If the workflow runs for less than 5 minutes, set it to run in the-->
+    <!--        background in the-->
+    <!--        <a-->
+    <!--          href="https://docs.automa.site/workflow/settings.html#workflow-execution"-->
+    <!--          class="font-semibold underline"-->
+    <!--          target="_blank"-->
+    <!--        >-->
+    <!--          workflow settings.-->
+    <!--        </a>-->
+    <!--      </p>-->
+    <!--      <v-remixicon-->
+    <!--        name="riCloseLine"-->
+    <!--        class="absolute top-2 right-2 cursor-pointer text-gray-300 dark:text-gray-600"-->
+    <!--        size="20"-->
+    <!--        @click="closeSettingsPopup"-->
+    <!--      />-->
+    <!--    </div>-->
   </div>
 </template>
 <script setup>
@@ -237,7 +270,8 @@ import { useI18n } from 'vue-i18n';
 import browser from 'webextension-polyfill';
 import { usePurchasedWorkflowStore } from '@/stores/purchasedWorkflow';
 import { ENV_HOST } from '@/common/utils/constant';
-import { RiRefreshLine } from '@remixicon/vue';
+import { RiRefreshLine, RiArrowRightSLine } from '@remixicon/vue';
+import { fetchApi } from '@/utils/api';
 
 const isMV2 = browser.runtime.getManifest().manifest_version === 2;
 
@@ -272,6 +306,7 @@ const state = shallowReactive({
   showSettingsPopup: isMV2
     ? false
     : parseJSON(localStorage.getItem('settingsPopup'), true) ?? true,
+  suggestedWorkflows: [],
 });
 
 const pinnedWorkflows = computed(() => {
@@ -339,10 +374,11 @@ const workflows = computed(() => {
 });
 const showTab = true;
 
-function closeSettingsPopup() {
-  state.showSettingsPopup = false;
-  localStorage.setItem('settingsPopup', false);
-}
+// function closeSettingsPopup() {
+//   state.showSettingsPopup = false;
+//   localStorage.setItem('settingsPopup', false);
+// }
+
 function togglePinWorkflow(workflow) {
   const index = state.pinnedWorkflows.indexOf(workflow.id);
   const copyData = [...state.pinnedWorkflows];
@@ -472,10 +508,67 @@ watch(
   }
 );
 
-onMounted(reloadSidePanel);
+onMounted(async () => {
+  fetchApi('/me/products').then((res) =>
+    res.json().then((ret) => {
+      state.suggestedWorkflows = ret.data.products;
+    })
+  );
+  reloadSidePanel();
+});
 </script>
 <style>
 .recording-card {
   transition: height 300ms cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.suggested-workflow {
+  display: flex;
+  align-items: center;
+  box-shadow: 0 0 2px grey;
+  border-radius: 4px;
+  margin: 10px 0;
+  font-weight: normal;
+  padding: 10px 0 10px 10px;
+  transition: 200ms;
+
+  &:hover {
+    background: whitesmoke;
+  }
+
+  .summary {
+    flex-grow: 1;
+    cursor: pointer;
+
+    > * {
+      text-align: left;
+    }
+
+    .name {
+      color: #6639c0;
+      font-size: 14px;
+    }
+
+    .desc {
+      font-size: 12px;
+      color: grey;
+    }
+  }
+
+  .goto-btn {
+    color: #6639c0;
+    width: 40px;
+    text-align: center;
+
+    transform: scale(0.8, 1.8);
+  }
+}
+
+.goto-shop-btn {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  padding: 10px;
 }
 </style>

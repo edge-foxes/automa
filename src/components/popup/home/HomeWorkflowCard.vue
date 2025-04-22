@@ -1,6 +1,7 @@
 <template>
   <ui-card
     class="flex w-full items-center space-x-2 hover:ring-2 hover:ring-gray-900"
+    style="border: 1px solid lightgrey"
   >
     <div
       class="text-overflow flex-1 cursor-pointer"

@@ -122,7 +122,7 @@ export async function getUserWorkflows(useCache = true) {
         if (!response.ok) throw new Error(response.statusText);
 
         const result = await response.json();
-        const workflows = result.data.records.reduce(
+        const workflows = (result.data.records || []).reduce(
           (acc, workflow) => {
             if (workflow.isHost) {
               acc.hosted[workflow.id] = {
