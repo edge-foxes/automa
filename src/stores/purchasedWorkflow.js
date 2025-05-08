@@ -94,7 +94,7 @@ export const usePurchasedWorkflowStore = defineStore('purchased-workflows', {
         if (!workflows[id]) {
           workflows[id] = item;
         } else {
-          const oldVersion = workflows[id].version.number;
+          const oldVersion = item.version.number;
           workflows[id] = defu(workflows[id], item);
           if (oldVersion !== workflows[id].version.number) {
             delete workflows[id].ciphertext;

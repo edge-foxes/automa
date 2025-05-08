@@ -661,7 +661,7 @@ const updateHostedWorkflow = throttle(async () => {
 
     const response = await fetchApi(`/me/workflows/${route.params.id}`, {
       auth: true,
-      method: 'PUT',
+      method: 'PATCH',
       keepalive: true,
       body: JSON.stringify({
         workflow: workflowPayload.data,

@@ -101,6 +101,7 @@ export const useWorkflowStore = defineStore('workflow', {
     popupStates: [],
     retrieved: false,
     isFirstTime: false,
+    inSellingWorkflows: [],
   }),
   getters: {
     getAllStates: (state) => [...state.popupStates, ...state.states],
@@ -218,8 +219,25 @@ export const useWorkflowStore = defineStore('workflow', {
     ) {
       const insertedData = {};
 
-      data.forEach((item) => {
+      let inSellWorkflows;
+      for (let item of data) {
         const currentWorkflow = this.workflows[item.id];
+        if (!item.drawflow) {
+          if (!inSellWorkflows) {
+            inSellWorkflows = [];
+          }
+
+          const result = await fetchApi(`/me/workflows/${item.id}`);
+          item = (await result.json()).data.workflow;
+          if (!item.id) {
+            // eslint-disable-next-line no-continue
+            continue;
+          }
+
+          if (item.has_products) {
+            inSellWorkflows.push(item.id);
+          }
+        }
 
         if (currentWorkflow) {
           let insert = true;
@@ -238,13 +256,38 @@ export const useWorkflowStore = defineStore('workflow', {
           this.workflows[workflow.id] = workflow;
           insertedData[workflow.id] = workflow;
         }
-      });
+      }
 
       await this.saveToStorage('workflows');
+      await this.saveToStorage('inSellWorkflows');
 
       return insertedData;
     },
     async delete(id) {
+      const userStore = useUserStore();
+
+      const hostedWorkflow = userStore.hostedWorkflows[id];
+      const backupIndex = userStore.backupIds.indexOf(id);
+
+      if (hostedWorkflow || backupIndex !== -1) {
+        const response = await fetchApi(`/me/workflows/${id}`, {
+          auth: true,
+          method: 'DELETE',
+        });
+        const result = await response.json();
+
+        if (!response.ok) {
+          const msg = result.errors[0].message;
+          alert(msg);
+          throw new Error(msg);
+        }
+
+        if (backupIndex !== -1) {
+          userStore.backupIds.splice(backupIndex, 1);
+          await browser.storage.local.set({ backupIds: userStore.backupIds });
+        }
+      }
+
       if (Array.isArray(id)) {
         id.forEach((workflowId) => {
           delete this.workflows[workflowId];
@@ -254,28 +297,6 @@ export const useWorkflowStore = defineStore('workflow', {
       }
 
       await cleanWorkflowTriggers(id);
-
-      const userStore = useUserStore();
-
-      const hostedWorkflow = userStore.hostedWorkflows[id];
-      const backupIndex = userStore.backupIds.indexOf(id);
-
-      if (hostedWorkflow || backupIndex !== -1) {
-        const response = await fetchApi(`/me/workflows?id=${id}`, {
-          auth: true,
-          method: 'DELETE',
-        });
-        const result = await response.json();
-
-        if (!response.ok) {
-          throw new Error(result.message);
-        }
-
-        if (backupIndex !== -1) {
-          userStore.backupIds.splice(backupIndex, 1);
-          await browser.storage.local.set({ backupIds: userStore.backupIds });
-        }
-      }
 
       await browser.storage.local.remove([
         `state:${id}`,
