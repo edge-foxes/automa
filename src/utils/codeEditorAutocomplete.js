@@ -169,4 +169,40 @@ export const automaFuncsSnippets = {
       return container;
     },
   },
+  xuantaGetCookie: {
+    label: 'xuantaGetCookie',
+    type: 'function',
+    apply: snippet("xuantaGetCookie('${url}', '${name}')"),
+    info: () => {
+      const container = document.createElement('div');
+
+      container.innerHTML = `
+        <code>xuantaGetCookie(<i>url</i>, <i>name</i>)</code>
+        <p class="mt-2">
+          url: 当前页面url, name: cookie 名称
+          <h4>示例：</h4>
+          url = "https://www.qq.com",
+          name = "suid"
+          返回：
+          <code>
+{
+  "domain": ".qq.com",
+  "expirationDate": 1762173400,
+  "hostOnly": false,
+  "httpOnly": false,
+  "name": "suid",
+  "path": "/",
+  "sameSite": "unspecified",
+  "secure": false,
+  "session": false,
+  "storeId": "0",
+  "value": "user_0_CFDaMp93iJGXF"
+}
+          </code>
+        </p>
+      `;
+
+      return container;
+    },
+  },
 };

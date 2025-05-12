@@ -413,3 +413,18 @@ document.addEventListener(
     }
   )
 );
+
+document.addEventListener('xuanta:cookie:get', async (e) => {
+  const ret = await chrome.runtime.sendMessage({
+    name: 'background--xuanta:cookie:get',
+    data: e.detail,
+  });
+  debugger;
+  document.dispatchEvent(
+    new CustomEvent('xuanta:cookie:get:ret', {
+      detail: ret,
+      bubbles: true,
+      cancelable: false,
+    })
+  );
+});

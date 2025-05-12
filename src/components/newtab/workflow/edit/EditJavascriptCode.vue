@@ -103,7 +103,11 @@
               <a
                 v-for="func in availableFuncs"
                 :key="func.id"
-                :href="`https://docs.automa.site/blocks/javascript-code.html#${func.id}`"
+                :href="
+                  func.id
+                    ? `https://docs.automa.site/blocks/javascript-code.html#${func.id}`
+                    : undefined
+                "
                 target="_blank"
                 rel="noopener"
                 class="inline-block"
@@ -194,8 +198,9 @@ const availableFuncs = [
     id: 'automasetvariable-type-resource',
   },
   { name: 'automaResetTimeout()', id: 'automaresettimeout' },
+  { name: 'xuantaGetCookie(name)' },
 ];
-const autocompleteList = Object.values(automaFuncsSnippets).slice(0, 4);
+const autocompleteList = Object.values(automaFuncsSnippets);
 
 const workflow = inject('workflow');
 

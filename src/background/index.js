@@ -16,6 +16,7 @@ import BackgroundEventsListeners from './BackgroundEventsListeners';
 import BackgroundOffscreen from './BackgroundOffscreen';
 import BackgroundUtils from './BackgroundUtils';
 import BackgroundWorkflowUtils from './BackgroundWorkflowUtils';
+import * as xuantaApis from './xuantaApis';
 
 BackgroundOffscreen.instance.sendMessage('halo');
 
@@ -489,6 +490,8 @@ function automaFetchClient(id, { type, resource }) {
 function automaFetch(type, resource) {
   return automaFetchClient('${varName}', { type, resource });
 }
+
+${xuantaApis.xuantaGetCookie.toString()}
   `;
 
   if (everyNewTab) str = automaRefDataStr(varName);
@@ -1049,11 +1052,15 @@ message.on('downloads:watch-changed', async ({ downloadId, onComplete }) => {
 
   return true;
 });
-
 automa('background', message);
 
 browser.runtime.onMessage.addListener(message.listener);
 
 browser.action.onClicked.addListener((tab) => {
   browser.sidePanel.open({ windowId: tab.windowId });
+});
+
+message.on('xuanta:cookie:get', async ({ url, name }) => {
+  const ret = await chrome.cookies.get({ url, name });
+  return ret;
 });

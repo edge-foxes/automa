@@ -1,6 +1,6 @@
 {
   "name": "旋塔Automa",
-  "version": "1.0.11",
+  "version": "1.0.12",
   "description": "浏览器自动化工具, powered by automa 1.29.9",
   "scripts": {
     "build": "node utils/build.js",
