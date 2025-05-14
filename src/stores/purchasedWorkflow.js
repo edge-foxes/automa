@@ -44,9 +44,12 @@ export const usePurchasedWorkflowStore = defineStore('purchased-workflows', {
       } = await (await fetchApi(`/me/workflows/leases/${id}`)).json();
       const json = await decryptData(encrypted_workflow);
 
-      target.ciphertext = await encryptData(json, key);
+      const workflow = JSON.parse(json);
+      workflow.id = id;
+      const wfJSON = JSON.stringify(workflow);
+      target.ciphertext = await encryptData(wfJSON, key);
       await this.saveWorkflow();
-      return JSON.parse(json);
+      return workflow;
     },
     async fetchWorkflows(useCache = true) {
       const userStore = useUserStore();

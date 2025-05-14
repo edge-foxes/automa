@@ -69,9 +69,9 @@
 </template>
 <script setup>
 import { useI18n } from 'vue-i18n';
-import { useToast } from 'vue-toastification';
+// import { useToast } from 'vue-toastification';
 import { useStore } from '@/stores/main';
-import openGDriveFilePicker from '@/utils/openGDriveFilePicker';
+// import openGDriveFilePicker from '@/utils/openGDriveFilePicker';
 import EditGoogleSheets from './EditGoogleSheets.vue';
 
 const props = defineProps({
@@ -83,7 +83,7 @@ const props = defineProps({
 const emit = defineEmits(['update:data']);
 
 const { t } = useI18n();
-const toast = useToast();
+// const toast = useToast();
 const store = useStore();
 store.getConnectedSheets();
 
@@ -91,20 +91,20 @@ function updateData(value) {
   emit('update:data', { ...props.data, ...value });
 }
 function connectSheet() {
-  openGDriveFilePicker().then((result) => {
-    if (!result) return;
-
-    const { name, id, mimeType } = result;
-
-    if (mimeType !== 'application/vnd.google-apps.spreadsheet') {
-      toast.error('File is not a google spreadsheet');
-      return;
-    }
-
-    const sheetExists = store.connectedSheets.some((sheet) => sheet.id === id);
-    if (sheetExists) return;
-
-    store.connectedSheets.push({ name, id });
-  });
+  // openGDriveFilePicker().then((result) => {
+  //   if (!result) return;
+  //
+  //   const { name, id, mimeType } = result;
+  //
+  //   if (mimeType !== 'application/vnd.google-apps.spreadsheet') {
+  //     toast.error('File is not a google spreadsheet');
+  //     return;
+  //   }
+  //
+  //   const sheetExists = store.connectedSheets.some((sheet) => sheet.id === id);
+  //   if (sheetExists) return;
+  //
+  //   store.connectedSheets.push({ name, id });
+  // });
 }
 </script>

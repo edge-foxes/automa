@@ -132,6 +132,11 @@ import { parseJSON } from '@/utils/helper';
 import ParameterInputValue from '@/components/newtab/workflow/edit/Parameter/ParameterInputValue.vue';
 import ParameterJsonValue from '@/components/newtab/workflow/edit/Parameter/ParameterJsonValue.vue';
 import ParameterCheckboxValue from '@/components/newtab/workflow/edit/Parameter/ParameterCheckboxValue.vue';
+import { usePurchasedWorkflowStore } from '@/stores/purchasedWorkflow';
+import { useUserStore } from '@/stores/user';
+
+const userStore = useUserStore();
+const purchasedWorkflowStore = usePurchasedWorkflowStore();
 
 const paramsList = {
   string: {
@@ -160,9 +165,10 @@ theme.init();
 const retrieved = ref(false);
 const workflows = ref([]);
 
-const sortedWorkflows = computed(() =>
-  workflows.value.slice().sort((a, b) => b.addedDate - a.addedDate)
-);
+const sortedWorkflows = computed(() => {
+  const ans = workflows.value.slice().sort((a, b) => b.addedDate - a.addedDate);
+  return ans;
+});
 
 const flattenTeamWorkflows = (items) => Object.values(Object.values(items)[0]);
 
@@ -178,18 +184,19 @@ async function findWorkflow(workflowId) {
     return teamWorkflowsArr.find((item) => item.id === workflowId);
   }
 
-  const { workflows: localWorkflows, workflowHosts } =
-    await browser.storage.local.get(['workflows', 'workflowHosts']);
+  const { workflows: _localWorkflows } = await browser.storage.local.get([
+    'workflows',
+  ]);
+  const localWorkflows = _localWorkflows ?? {};
   let workflow = Array.isArray(localWorkflows)
     ? localWorkflows.find(({ id }) => id === workflowId)
     : localWorkflows[workflowId];
 
+  // 从已购中找
   if (!workflow) {
-    workflow = Object.values(workflowHosts || {}).find(
-      ({ hostId }) => hostId === workflowId
-    );
-
-    if (workflow) workflow.id = workflow.hostId;
+    await userStore.loadUser({ storage: localStorage, ttl: 1000 * 60 * 5 });
+    await purchasedWorkflowStore.fetchWorkflows();
+    workflow = await purchasedWorkflowStore.getClearTextById(workflowId);
   }
 
   return workflow;
