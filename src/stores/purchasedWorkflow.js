@@ -12,6 +12,15 @@ export const usePurchasedWorkflowStore = defineStore('purchased-workflows', {
     toArray: (state) => Object.values(state.workflows),
   },
   actions: {
+    async getCachedWorkflows() {
+      const { purchased_workflow } = await chrome.storage.local.get([
+        'purchased_workflow',
+      ]);
+      const localCache = purchased_workflow
+        ? JSON.parse(purchased_workflow)
+        : {};
+      return localCache;
+    },
     getById(id) {
       if (!this.workflows) return null;
       return this.workflows[id] || null;
@@ -36,7 +45,9 @@ export const usePurchasedWorkflowStore = defineStore('purchased-workflows', {
 
       if (target.ciphertext) {
         const json = await decryptData(target.ciphertext, key);
-        return JSON.parse(json);
+        const workflow = JSON.parse(json);
+        workflow.id = id;
+        return workflow;
       }
 
       const {
@@ -87,12 +98,7 @@ export const usePurchasedWorkflowStore = defineStore('purchased-workflows', {
         useCache
       );
 
-      const { purchased_workflow } = await chrome.storage.local.get([
-        'purchased_workflow',
-      ]);
-      const localCache = purchased_workflow
-        ? JSON.parse(purchased_workflow)
-        : {};
+      const localCache = await this.getCachedWorkflows();
       for (const [id, item] of Object.entries(localCache)) {
         if (!workflows[id]) {
           workflows[id] = item;

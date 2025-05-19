@@ -307,6 +307,12 @@ const state = shallowReactive({
     ? false
     : parseJSON(localStorage.getItem('settingsPopup'), true) ?? true,
   suggestedWorkflows: [],
+
+  purchasedWorkflowsCache: {},
+});
+
+purchasedWorkflowStore.getCachedWorkflows().then((wfs) => {
+  state.purchasedWorkflowsCache = wfs;
 });
 
 const pinnedWorkflows = computed(() => {
@@ -358,7 +364,12 @@ const localWorkflows = computed(() => {
 const purchasedWorkflows = computed(() => {
   if (state.activeTab !== 'purchased') return [];
 
-  return purchasedWorkflowStore.toArray.filter((workflow) =>
+  const rtWfs = purchasedWorkflowStore.toArray;
+  const wfs = rtWfs.length
+    ? rtWfs
+    : Object.values(state.purchasedWorkflowsCache);
+
+  return wfs.filter((workflow) =>
     workflow.name.toLocaleLowerCase().includes(state.query.toLocaleLowerCase())
   );
 });

@@ -17,7 +17,7 @@
       <v-remixicon name="riPlayLine" />
     </button>
     <v-remixicon
-      v-if="workflow.isProtected"
+      v-if="workflow.isProtected || props.tab === 'purchased'"
       name="riShieldKeyholeLine"
       class="text-green-600"
     />
