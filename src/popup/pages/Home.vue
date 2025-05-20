@@ -74,59 +74,74 @@
     v-if="state.activeTab === 'purchased'"
     class="relative z-20 space-y-2 px-5 pb-5"
   >
-    <template v-if="workflows.length">
-      <home-workflow-card
-        v-for="workflow in workflows"
-        :key="workflow.id"
-        :workflow="workflow"
-        :tab="state.activeTab"
-        @execute="executePurchasedWorkflow"
-      />
+    <template v-if="userStore.user">
+      {{ userStore.user }}
+      <template v-if="workflows.length">
+        <home-workflow-card
+          v-for="workflow in workflows"
+          :key="workflow.id"
+          :workflow="workflow"
+          :tab="state.activeTab"
+          @execute="executePurchasedWorkflow"
+        />
 
-      <div style="height: 30px" />
+        <div style="height: 30px" />
 
-      <div class="goto-shop-btn">
+        <div class="goto-shop-btn">
+          <ui-button
+            style="width: 100%"
+            variant="accent"
+            class="mt-6"
+            @click="openTab(`https://${ENV_HOST}/products`)"
+          >
+            获取更多工作流
+          </ui-button>
+        </div>
+      </template>
+      <ui-card v-else class="text-center">
+        <div style="text-align: center; font-weight: bolder; font-size: 16px">
+          发现优质工作流
+        </div>
+        <div style="text-align: center; font-size: 14px">
+          立即获取专业级自动化工作流
+        </div>
+
+        <div
+          v-for="item in state.suggestedWorkflows.slice(0, 3)"
+          :key="item.id"
+          class="suggested-workflow"
+          @click="openTab(`https://${ENV_HOST}/products/${item.id}`)"
+        >
+          <div class="summary">
+            <div class="name">{{ item.name }}</div>
+            <div class="desc">{{ item.description }}</div>
+          </div>
+
+          <RiArrowRightSLine class="goto-btn" />
+        </div>
+
         <ui-button
           style="width: 100%"
           variant="accent"
           class="mt-6"
           @click="openTab(`https://${ENV_HOST}/products`)"
         >
-          获取更多工作流
+          查看更多工作流
         </ui-button>
+      </ui-card>
+    </template>
+    <template v-else>
+      <div
+        style="
+          text-align: center;
+          padding: 50px;
+          background: white;
+          border-radius: 8px;
+        "
+      >
+        登录后才能查看已购工作流
       </div>
     </template>
-    <ui-card v-else class="text-center">
-      <div style="text-align: center; font-weight: bolder; font-size: 16px">
-        发现优质工作流
-      </div>
-      <div style="text-align: center; font-size: 14px">
-        立即获取专业级自动化工作流
-      </div>
-
-      <div
-        v-for="item in state.suggestedWorkflows.slice(0, 3)"
-        :key="item.id"
-        class="suggested-workflow"
-        @click="openTab(`https://${ENV_HOST}/products/${item.id}`)"
-      >
-        <div class="summary">
-          <div class="name">{{ item.name }}</div>
-          <div class="desc">{{ item.description }}</div>
-        </div>
-
-        <RiArrowRightSLine class="goto-btn" />
-      </div>
-
-      <ui-button
-        style="width: 100%"
-        variant="accent"
-        class="mt-6"
-        @click="openTab(`https://${ENV_HOST}/products`)"
-      >
-        查看更多工作流
-      </ui-button>
-    </ui-card>
   </div>
   <div
     v-if="state.activeTab !== 'team' && state.activeTab !== 'purchased'"
@@ -520,11 +535,15 @@ watch(
 );
 
 onMounted(async () => {
-  fetchApi('/me/products').then((res) =>
-    res.json().then((ret) => {
-      state.suggestedWorkflows = ret.data.products;
-    })
-  );
+  fetchApi('/me/products').then((res) => {
+    if (res.ok) {
+      res.json().then((ret) => {
+        state.suggestedWorkflows = ret.data.products;
+      });
+    } else {
+      userStore.user = null;
+    }
+  });
   reloadSidePanel();
 });
 </script>

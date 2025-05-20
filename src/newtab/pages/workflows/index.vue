@@ -282,8 +282,12 @@
           </ui-tab-panel>
           <ui-tab-panel value="purchased" class="workflows-container">
             <workflows-purchased
+              v-if="userStore.user"
               :sort="{ by: state.sortBy, order: state.sortOrder }"
             />
+            <div v-else style="text-align: center; padding: 50px 0; color: red">
+              登录后才能查看已购买的工作流
+            </div>
           </ui-tab-panel>
         </ui-tab-panels>
       </div>
