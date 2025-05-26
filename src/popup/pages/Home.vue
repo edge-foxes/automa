@@ -75,7 +75,6 @@
     class="relative z-20 space-y-2 px-5 pb-5"
   >
     <template v-if="userStore.user">
-      {{ userStore.user }}
       <template v-if="workflows.length">
         <home-workflow-card
           v-for="workflow in workflows"
